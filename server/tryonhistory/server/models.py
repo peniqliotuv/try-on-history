@@ -11,7 +11,7 @@ class Item(models.Model):
     lowest_price = models.PositiveIntegerField(null=True, blank=True)
     highest_price = models.PositiveIntegerField(null=True, blank=True)
     # We want to be able to store multiple image URLS
-    image_urls = ArrayField(models.URLField(null=True, blank=True))
+    image_urls = ArrayField(models.URLField(null=True, blank=True), null=True, blank=True)
     product_description = models.TextField(blank=True)
     fit = models.FloatField(default=0.0)
     # negative means runs small, positive means runs big, 0 is just right
@@ -25,24 +25,22 @@ class Item(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     try_on_histories = models.ManyToManyField(Item, through='TryOnHistory')
-    email = models.EmailField(blank=True)
-    name = models.CharField(blank=True, max_length=50)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
-# Hook this method onto the save event of a user
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
+    # Hook this method onto the save event of a user
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance=None, created=False, **kwargs):
+        if created:
+            UserProfile.objects.get_or_create(user=instance)
 
-# Hook this method onto the save event of the user
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.UserProfile.save()
+    # Hook this method onto the save event of the user
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.UserProfile.save()
 
 class Offer(models.Model):
     merchant = models.CharField(blank=True, max_length=200)
