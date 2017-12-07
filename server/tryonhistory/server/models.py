@@ -40,7 +40,7 @@ class UserProfile(models.Model):
     # Hook this method onto the save event of the user
     @receiver(post_save, sender=User)
     def save_user_profile(sender, instance, **kwargs):
-        instance.UserProfile.save()
+        instance.userprofile.save()
 
 class Offer(models.Model):
     merchant = models.CharField(blank=True, max_length=200)

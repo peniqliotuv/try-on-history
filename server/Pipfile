@@ -8,6 +8,7 @@ name = "pypi"
 django = "*"
 djangorestframework = "*"
 "psycopg2" = "*"
+httpie = "*"
 
 
 [dev-packages]
