@@ -10,6 +10,15 @@ class ItemSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
+class TryOnHistorySerializer(serializers.ModelSerializer):
+
+    product_name = serializers.ReadOnlyField(source='item.product_name')
+    id = serializers.ReadOnlyField(source='item.id')
+
+    class Meta:
+        model = TryOnHistory
+        fields = ('product_name', 'id', 'date_tried_on', 'purchased',)
+
 class UserProfileSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(source='pk', read_only=True)
@@ -17,12 +26,16 @@ class UserProfileSerializer(serializers.ModelSerializer):
     email = serializers.CharField(source='user.email')
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
+    try_on_histories = TryOnHistorySerializer(
+        source='tryonhistory_set', many=True, read_only=True
+    )
+
 
     class Meta:
         model = UserProfile
         fields = (
             'id', 'username', 'email', 'first_name', 'last_name',
-            'created_at', 'updated_at'
+            'created_at', 'updated_at', 'try_on_histories',
         )
         read_only_fields = ('created_at', 'updated_at',)
 

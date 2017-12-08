@@ -47,11 +47,11 @@ class Offer(models.Model):
     available = models.NullBooleanField(default=None)
     price = models.IntegerField()
     link = models.URLField(blank=True, null=True)
-    updated_at = models.DateField()
+    updated_at = models.DateTimeField()
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
 
 class TryOnHistory(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    date_tried_on = models.DateField()
+    date_tried_on = models.DateTimeField()
     purchased = models.BooleanField(default=False)

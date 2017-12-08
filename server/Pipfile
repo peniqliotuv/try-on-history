@@ -9,6 +9,8 @@ django = "*"
 djangorestframework = "*"
 "psycopg2" = "*"
 httpie = "*"
+coreapi = "*"
+"coreapi-cli" = "*"
 
 
 [dev-packages]
