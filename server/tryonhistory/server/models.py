@@ -3,6 +3,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import datetime
 
 
 class Item(models.Model):
@@ -20,7 +21,7 @@ class Item(models.Model):
     # divide fit by num reviews to get average fit
 
     def __str__(self):
-        return "%s %S" % (self.brand, self.product_name)
+        return "%s %s" % (self.brand, self.product_name)
 
 
 # Just have a one-to-one on the Django User model
@@ -49,13 +50,21 @@ class Offer(models.Model):
     merchant = models.CharField(blank=True, max_length=200)
     available = models.NullBooleanField(default=None)
     price = models.IntegerField()
+    shipping = models.FloatField(default=0)
     link = models.URLField(blank=True, null=True)
     updated_at = models.DateTimeField()
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return 'Product name: %s Merchant: %s' % (self.item.product_name, self.merchant)
 
 class TryOnHistory(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    date_tried_on = models.DateTimeField()
+    date_tried_on = models.DateTimeField(default=datetime.datetime.now)
     purchased = models.BooleanField(default=False)
+
+    def __str__(self):
+        username = self.user_profile.user.username
+        product_name = self.item.product_name
+        return 'Username: %s Product Name: %s' % (username, product_name)

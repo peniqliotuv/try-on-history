@@ -1,0 +1,5 @@
+[09/Dec/2017 17:59:09] INFO [TryOnHistory:32] hit /api/items/<pk>
+[09/Dec/2017 17:59:23] INFO [TryOnHistory:32] hit /api/items/<pk>
+[09/Dec/2017 17:59:23] DEBUG [TryOnHistory:65] Levi Strauss and Co Levi's Men's 505 Regular Fit Jean,Light Stonewash,32x32
+[09/Dec/2017 18:02:45] INFO [TryOnHistory:32] hit /api/items/<pk>
+[09/Dec/2017 18:02:45] DEBUG [TryOnHistory:65] Levi Strauss and Co Levi's Men's 505 Regular Fit Jean,Light Stonewash,32x32
