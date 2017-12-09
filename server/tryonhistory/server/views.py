@@ -74,7 +74,7 @@ class ItemViewSet(viewsets.ModelViewSet):
                     price = offer['price']
                     shipping = float(offer['shipping']) if offer['shipping'] else 0
                     # Pass in the item that we just created
-                    offer = Offer.objects.create(
+                    offer, created = Offer.objects.update_or_create(
                         merchant=merchant,
                         available=available,
                         price=price,
@@ -86,8 +86,6 @@ class ItemViewSet(viewsets.ModelViewSet):
 
                 # Create the intermediary object
                 TryOnHistory.objects.create(user_profile=request.user.userprofile, item=item)
-
-                return Response(json_response)
 
         # Retrieve from the database
         serializer = ItemSerializer(item)

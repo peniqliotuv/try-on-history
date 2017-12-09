@@ -1,7 +1,7 @@
 db.sqlite3
 tmp/
 logs/
-
+logfile
 .DS_Store
 
 # Python

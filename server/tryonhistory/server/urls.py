@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.schemas import get_schema_view
 from . import views
@@ -29,6 +29,7 @@ user_profile_detail = views.UserProfileViewSet.as_view({
 
 urlpatterns = [
     url(r'^jwt-auth/$', obtain_jwt_token),
+    url(r'^jwt-auth-refresh/$', refresh_jwt_token),
     url(r'^schema/$', schema_view),
     url(r'^items/$', item_list, name='item-list'),
     url(r'^items/(?P<pk>[0-9]+)/$', item_detail, name='item-detail'),
