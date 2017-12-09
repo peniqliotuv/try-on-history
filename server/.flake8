@@ -1,0 +1,16 @@
+[flake8]
+exclude =
+  docs/*,
+  */migrations/*,
+  server/settings.py,
+  server/__init__.py,
+  manage.py
+ignore =
+  # We don't care about docstrings
+  D100,
+  D101,
+  D102,
+  D103,
+  D104,
+  D105
+max-line-length=150

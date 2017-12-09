@@ -11,6 +11,9 @@ djangorestframework = "*"
 httpie = "*"
 coreapi = "*"
 "coreapi-cli" = "*"
+"flake8" = "*"
+"djangorestframework-jwt" = "*"
+requests = "*"
 
 
 [dev-packages]

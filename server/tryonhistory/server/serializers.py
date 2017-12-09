@@ -2,16 +2,17 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Item, UserProfile, Offer, TryOnHistory
 
+
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         # serialize all of the fields
         fields = '__all__'
-        read_only_fields = ('id',)
+        read_only_fields = ('upc',)
+        depth = 1
 
 
 class TryOnHistorySerializer(serializers.ModelSerializer):
-
     product_name = serializers.ReadOnlyField(source='item.product_name')
     id = serializers.ReadOnlyField(source='item.id')
 
@@ -19,8 +20,13 @@ class TryOnHistorySerializer(serializers.ModelSerializer):
         model = TryOnHistory
         fields = ('product_name', 'id', 'date_tried_on', 'purchased',)
 
-class UserProfileSerializer(serializers.ModelSerializer):
+class OfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Offer
+        fields = '__all__'
+        read_only_fields = ('id',)
 
+class UserProfileSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='pk', read_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.CharField(source='user.email')
@@ -29,7 +35,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
     try_on_histories = TryOnHistorySerializer(
         source='tryonhistory_set', many=True, read_only=True
     )
-
 
     class Meta:
         model = UserProfile
@@ -68,4 +73,3 @@ class UserProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'detail': 'User does not exist'})
         except:
             raise serializers.ValidationError({'detail': 'Unknown error'})
-

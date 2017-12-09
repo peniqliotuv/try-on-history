@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+
 class Item(models.Model):
-    upc = models.CharField(max_length=12, null=False)
+    upc = models.CharField(max_length=12, null=False, primary_key=True)
     product_name = models.CharField(max_length=200, null=False)
     brand = models.CharField(max_length=200)
     lowest_price = models.PositiveIntegerField(null=True, blank=True)
@@ -20,6 +21,7 @@ class Item(models.Model):
 
     def __str__(self):
         return "%s %S" % (self.brand, self.product_name)
+
 
 # Just have a one-to-one on the Django User model
 class UserProfile(models.Model):
@@ -42,6 +44,7 @@ class UserProfile(models.Model):
     def save_user_profile(sender, instance, **kwargs):
         instance.userprofile.save()
 
+
 class Offer(models.Model):
     merchant = models.CharField(blank=True, max_length=200)
     available = models.NullBooleanField(default=None)
@@ -49,6 +52,7 @@ class Offer(models.Model):
     link = models.URLField(blank=True, null=True)
     updated_at = models.DateTimeField()
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
+
 
 class TryOnHistory(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
