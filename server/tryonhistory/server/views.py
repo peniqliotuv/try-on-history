@@ -1,16 +1,16 @@
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound
-from rest_framework import generics, viewsets
-from rest_framework.decorators import detail_route, list_route
+from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.status import HTTP_401_UNAUTHORIZED
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.serializers import ValidationError
 from .models import Item, UserProfile, Offer, TryOnHistory
-from .serializers import ItemSerializer, UserProfileSerializer, TryOnHistorySerializer
-from django.http import HttpResponseBadRequest
+from .serializers import ItemSerializer, UserProfileSerializer
 import requests
 import logging
+import json
 from datetime import datetime, timezone
 
 # Instantiate a Logger object
@@ -34,11 +34,8 @@ class ItemViewSet(viewsets.ModelViewSet):
         except ObjectDoesNotExist:
             params = {'upc': pk}
             r = requests.get(self.UPC_DB_URL, params=params)
-            json_response= r.json()
+            json_response = r.json()
             if json_response['code'] == 'INVALID_UPC' or not json_response['items']:
-            #     payload = json.dumps({'detail': 'Invalid upc %s' % pk})
-            #     return HttpResponseBadRequest(payload, content_type='application/json')
-            # elif not json_response['items']:
                 raise NotFound(detail='Data for upc %s not found' % pk, code=404)
             else:
                 # Retrieve the item from the json response
@@ -91,9 +88,35 @@ class ItemViewSet(viewsets.ModelViewSet):
         serializer = ItemSerializer(item)
         return Response(serializer.data)
 
+    '''
+    Overriding PUT because we want to only update the fit fields
+    '''
+    def update(self, request, pk=None):
+        item = get_object_or_404(Item, pk=pk)
+        logger.debug(request.data)
+        # If incorrect parameters passed to PUT request
+        if 'fit' not in request.data:
+            response = {'detail': 'Fit attribute must be provided'}
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        elif type(request.data['fit']) is not float:
+            response = {'detail': 'Fit attribute must be a float'}
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            data = request.data
+            prev_total_score = item.fit * item.num_reviews
+            data['num_reviews'] = item.num_reviews + 1
+            data['fit'] = (prev_total_score + data['fit']) / data['num_reviews']
+            serializer = ItemSerializer(item, data=data, partial=True)
+            try:
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+            except ValidationError:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
-
