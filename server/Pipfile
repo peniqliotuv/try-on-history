@@ -14,6 +14,7 @@ coreapi = "*"
 "flake8" = "*"
 "djangorestframework-jwt" = "*"
 requests = "*"
+"django-rest-swagger" = "*"
 
 
 [dev-packages]

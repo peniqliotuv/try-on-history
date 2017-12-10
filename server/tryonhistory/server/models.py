@@ -32,7 +32,7 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.user.username
 
     # Hook this method onto the save event of a user
     @receiver(post_save, sender=User)

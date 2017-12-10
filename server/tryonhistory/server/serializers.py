@@ -14,11 +14,11 @@ class ItemSerializer(serializers.ModelSerializer):
 
 class TryOnHistorySerializer(serializers.ModelSerializer):
     product_name = serializers.ReadOnlyField(source='item.product_name')
-    id = serializers.ReadOnlyField(source='item.id')
+    upc = serializers.ReadOnlyField(source='item.upc')
 
     class Meta:
         model = TryOnHistory
-        fields = ('product_name', 'id', 'date_tried_on', 'purchased',)
+        fields = ('product_name', 'upc', 'date_tried_on', 'purchased',)
 
 
 class OfferSerializer(serializers.ModelSerializer):

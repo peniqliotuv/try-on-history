@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.serializers import ValidationError
 from .models import Item, UserProfile, Offer, TryOnHistory
-from .serializers import ItemSerializer, UserProfileSerializer
+from .serializers import ItemSerializer, UserProfileSerializer, TryOnHistorySerializer
 from datetime import datetime, timezone
 import requests
 import logging
@@ -94,7 +94,6 @@ class ItemViewSet(viewsets.ModelViewSet):
     '''
     def update(self, request, pk=None):
         item = get_object_or_404(Item, pk=pk)
-        logger.debug(request.data)
         # If incorrect parameters passed to PUT request
         if 'fit' not in request.data:
             response = {'detail': 'Fit attribute must be provided'}
@@ -115,6 +114,42 @@ class ItemViewSet(viewsets.ModelViewSet):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(serializer.data, status=status.HTTP_200_OK)
+
+class HistoryViewSet(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated,)
+
+    # Helper function
+    def get_object(self, user_profile, pk):
+        try:
+            histories = TryOnHistory.objects.filter(user_profile=user_profile)
+            return histories.get(item__upc=pk)
+        except TryOnHistory.DoesNotExist:
+            raise NotFound(detail='History for upc %s not found' % pk, code=404)
+
+    '''
+    Retrieve a list of all of a user's tried on histories
+    '''
+    def list(self, request):
+        user_profile = request.user.userprofile
+        histories = TryOnHistory.objects.filter(user_profile=user_profile)
+        serializer = TryOnHistorySerializer(histories, many=True)
+        return Response(serializer.data)
+
+    '''
+    Retrieve information about a user's tried on history of a specific item
+    '''
+    def retrieve(self, request, pk=None):
+        history = self.get_object(request.user.userprofile, pk)
+        serializer = TryOnHistorySerializer(history)
+        return Response(serializer.data)
+
+    '''
+    Delete something from a user's tried on history
+    '''
+    def destroy(self, request, pk=None):
+        history = self.get_object(request.user.userprofile, pk)
+        history.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
