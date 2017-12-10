@@ -20,11 +20,13 @@ class TryOnHistorySerializer(serializers.ModelSerializer):
         model = TryOnHistory
         fields = ('product_name', 'id', 'date_tried_on', 'purchased',)
 
+
 class OfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer
         fields = '__all__'
         read_only_fields = ('id',)
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='pk', read_only=True)
@@ -43,6 +45,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at', 'try_on_histories',
         )
         read_only_fields = ('created_at', 'updated_at',)
+        depth = 1
 
     def create(self, validated_data):
 

@@ -19,6 +19,7 @@ item_detail = views.ItemViewSet.as_view({
 
 user_profile_list = views.UserProfileViewSet.as_view({
     'get': 'list',
+    'post': 'create_profile',
 })
 
 user_profile_detail = views.UserProfileViewSet.as_view({

@@ -1,17 +1,18 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound
 from rest_framework import viewsets, status
+from rest_framework.decorators import detail_route
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.serializers import ValidationError
 from .models import Item, UserProfile, Offer, TryOnHistory
 from .serializers import ItemSerializer, UserProfileSerializer
+from datetime import datetime, timezone
 import requests
 import logging
-import json
-from datetime import datetime, timezone
+
 
 # Instantiate a Logger object
 logger = logging.getLogger('TryOnHistory')
@@ -119,4 +120,27 @@ class ItemViewSet(viewsets.ModelViewSet):
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
+
+    '''
+    Custom create_profile route to hit the post_save hook in the UserProfile model
+    '''
+    @detail_route(methods=['post'])
+    def create_profile(self, request):
+        username = request.data['username']
+        email = request.data['email']
+        password = request.data['password']
+
+        if not username or not email or not password:
+            detail = {'detail': 'Must provide username, password, and email'}
+            return Response(detail, status=status.HTTP_400_BAD_REQUEST)
+        elif User.objects.filter(username=request.data['username']).exists():
+            response = {'detail': 'User with such username already exists'}
+            return Response(response, status=status.HTTP_409_CONFLICT)
+        user = User.objects.create_user(
+            request.data['username'],
+            request.data['email'],
+            request.data['password'],
+        )
+        user.save()
+        return Response({'detail': 'User was successfully created'}, status=status.HTTP_201_CREATED)
