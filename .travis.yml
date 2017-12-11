@@ -15,4 +15,4 @@ before_script:
   - psql -c 'CREATE USER test;' -U postgres
   - psql -c 'ALTER USER test CREATEDB;' -U postgres
 script:
-  - pipenv run python3 manage.py test
+  - cd server/tryonhistory && pipenv run python3 manage.py test
