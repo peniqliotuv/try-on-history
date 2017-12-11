@@ -5,8 +5,6 @@ services:
   - postgresql
 python:
   - "3.6"
-  - "3.7-dev"
-  - "nightly"
 install:
   - "pip install pipenv"
   - "pipenv install --dev"
@@ -14,5 +12,7 @@ before_script:
   - psql -c 'CREATE DATABASE tryonhistory;' -U postgres
   - psql -c 'CREATE USER test;' -U postgres
   - psql -c 'ALTER USER test CREATEDB;' -U postgres
+  - pipenv shell
+  - cd server/tryonhistory
 script:
-  - cd server/tryonhistory && pipenv run python3 manage.py test
+  - python3 manage.py test
