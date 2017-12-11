@@ -18,7 +18,8 @@ class TryOnHistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TryOnHistory
-        fields = ('product_name', 'upc', 'date_tried_on', 'purchased',)
+        fields = ('product_name', 'upc', 'date_purchased',
+            'date_tried_on', 'purchased',)
 
 
 class OfferSerializer(serializers.ModelSerializer):
@@ -26,12 +27,15 @@ class OfferSerializer(serializers.ModelSerializer):
         model = Offer
         fields = '__all__'
         read_only_fields = ('id',)
+        # We don't want to include the nested information about the object
+        depth = 0
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'email', 'first_name', 'last_name')
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='pk', read_only=True)

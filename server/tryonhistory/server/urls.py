@@ -26,6 +26,10 @@ item_detail = views.ItemViewSet.as_view({
     'delete': 'destroy',
 })
 
+item_detail_offers = views.ItemViewSet.as_view({
+    'get': 'offers',
+})
+
 user_profile_list = views.UserProfileViewSet.as_view({
     'get': 'list',
     'post': 'create_profile',
@@ -44,13 +48,15 @@ history_list = views.HistoryViewSet.as_view({
 history_detail = views.HistoryViewSet.as_view({
     'get': 'retrieve',
     'delete': 'destroy',
+    'put': 'update',
 })
 
 urlpatterns = [
-    url(r'^jwt-auth/$', obtain_jwt_token),
-    url(r'^jwt-auth-refresh/$', refresh_jwt_token),
+    url(r'^jwt-auth/$', obtain_jwt_token, name='jwt-auth'),
+    url(r'^jwt-auth-refresh/$', refresh_jwt_token, name='jwt-auth-refresh'),
     url(r'^items/$', item_list, name='item-list'),
     url(r'^items/(?P<pk>[0-9]+)/$', item_detail, name='item-detail'),
+    url(r'^items/(?P<pk>[0-9]+)/offers/$', item_detail_offers, name='item-detail-offers'),
     url(r'^history/$', history_list, name='history-list'),
     url(r'^history/(?P<pk>[0-9]+)/$', history_detail, name='history-detail'),
     url(r'^users/$', user_profile_list, name='user-profile-list'),

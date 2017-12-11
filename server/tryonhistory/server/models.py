@@ -67,9 +67,10 @@ class TryOnHistory(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     date_tried_on = models.DateTimeField(default=datetime.datetime.now)
+    date_purchased = models.DateTimeField(null=True, blank=True)
     purchased = models.BooleanField(default=False)
 
     def __str__(self):
         username = self.user_profile.user.username
         product_name = self.item.product_name
-        return 'Username: %s Product Name: %s' % (username, product_name)
+        return 'Username: %s \n Product Name: %s \n' % (username, product_name)

@@ -8,7 +8,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.serializers import ValidationError
 from .models import Item, UserProfile, Offer, TryOnHistory
-from .serializers import ItemSerializer, UserProfileSerializer, TryOnHistorySerializer, UserSerializer
+from .serializers import (
+    UserProfileSerializer,
+    TryOnHistorySerializer,
+    OfferSerializer,
+    UserSerializer,
+    ItemSerializer,
+)
 from datetime import datetime, timezone
 import requests
 import logging
@@ -121,12 +127,27 @@ class ItemViewSet(viewsets.ModelViewSet):
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
             except ValidationError:
+                logger.error(serializer.errors)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
-class HistoryViewSet(viewsets.ViewSet):
+    '''
+    Retrieve all of the offers for a certain item
+    '''
+    @detail_route(methods=['GET'])
+    def offers(self, request, pk=None):
+        offers = Offer.objects.filter(item__upc=pk)
+        if not offers:
+            raise NotFound(detail='UPC %s not found' % pk, code=404)
+        serializer = OfferSerializer(offers, many=True)
+        return Response(serializer.data)
+
+
+class HistoryViewSet(viewsets.ModelViewSet):
+    queryset = TryOnHistory.objects.all()
     permission_classes = (IsAuthenticated,)
+    serializer_class = TryOnHistorySerializer
 
     # Helper function
     def get_object(self, user_profile, pk):
@@ -161,6 +182,29 @@ class HistoryViewSet(viewsets.ViewSet):
         history.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    '''
+    Update the purchased status of the try-on-history
+    '''
+    def update(self, request, pk=None):
+        if 'purchased' not in request.data:
+            response = {'detail': '"purchased" field must be set'}
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+        history = self.get_object(request.user.userprofile, pk)
+        purchased = request.data['purchased']
+        data = {
+            'purchased': purchased,
+            'date_purchased': datetime.now() if purchased else None
+        }
+        serializer = TryOnHistorySerializer(history, data=data, partial=True)
+        try:
+            serializer.is_valid()
+            serializer.save()
+        except ValidationError:
+            logger.error(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
@@ -170,7 +214,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     '''
     Custom create_profile route to hit the post_save hook in the UserProfile model
     '''
-    @detail_route(methods=['post'])
     def create_profile(self, request):
         username = request.data['username']
         email = request.data['email']
@@ -190,7 +233,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         user.save()
         return Response({'detail': 'User was successfully created'}, status=status.HTTP_201_CREATED)
 
-
     '''
     Override update because we want partial = True
     and we need to access the actual Django User object itself.
@@ -209,5 +251,4 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             logger.error(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            logger.debug(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
