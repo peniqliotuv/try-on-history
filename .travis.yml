@@ -12,6 +12,6 @@ install:
 before_script:
   - psql -c 'CREATE DATABASE tryonhistory;' -U postgres
   - psql -c 'CREATE USER jtsui;' -U postgres
-  - psql -c 'ALTER USER test CREATEDB;' -U postgres
+  - psql -c 'ALTER USER jtsui CREATEDB;' -U postgres
 script:
   - pipenv run python3 manage.py test
