@@ -4,6 +4,10 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import datetime
+import logging
+
+
+logger = logging.getLogger('models')
 
 
 class Item(models.Model):
@@ -32,7 +36,7 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     def __str__(self):
-        return self.user.username
+        return "Username: %s " % self.user.username
 
     # Hook this method onto the save event of a user
     @receiver(post_save, sender=User)
@@ -57,6 +61,7 @@ class Offer(models.Model):
 
     def __str__(self):
         return 'Product name: %s Merchant: %s' % (self.item.product_name, self.merchant)
+
 
 class TryOnHistory(models.Model):
     user_profile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)

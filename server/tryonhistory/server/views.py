@@ -8,22 +8,21 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.serializers import ValidationError
 from .models import Item, UserProfile, Offer, TryOnHistory
-from .serializers import ItemSerializer, UserProfileSerializer, TryOnHistorySerializer
+from .serializers import ItemSerializer, UserProfileSerializer, TryOnHistorySerializer, UserSerializer
 from datetime import datetime, timezone
 import requests
 import logging
 
 
 # Instantiate a Logger object
-logger = logging.getLogger('TryOnHistory')
+logger = logging.getLogger('views')
+UPC_DB_URL = 'https://api.upcitemdb.com/prod/trial/lookup'
 
 
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     permission_classes = (IsAuthenticated,)
-
-    UPC_DB_URL = 'https://api.upcitemdb.com/prod/trial/lookup'
 
     '''
     We want to override this functionality because we want to perform a
@@ -34,7 +33,7 @@ class ItemViewSet(viewsets.ModelViewSet):
             item = Item.objects.get(pk=pk)
         except ObjectDoesNotExist:
             params = {'upc': pk}
-            r = requests.get(self.UPC_DB_URL, params=params)
+            r = requests.get(UPC_DB_URL, params=params)
             json_response = r.json()
             if json_response['code'] == 'INVALID_UPC' or not json_response['items']:
                 raise NotFound(detail='Data for upc %s not found' % pk, code=404)
@@ -48,6 +47,7 @@ class ItemViewSet(viewsets.ModelViewSet):
                 highest_price = items['highest_recorded_price']
                 brand = items['brand']
                 image_urls = items['images']
+
                 # Create the actual object
                 item = Item.objects.create(
                     upc=pk,
@@ -58,6 +58,9 @@ class ItemViewSet(viewsets.ModelViewSet):
                     brand=brand,
                     image_urls=image_urls
                 )
+
+                # First delete all of the previously existing offers in the database
+                Offer.objects.filter(item=item).delete()
 
                 # Create the Offer objects and associate them with the Item
                 offers = items['offers']
@@ -82,10 +85,17 @@ class ItemViewSet(viewsets.ModelViewSet):
                         item=item
                     )
 
-                # Create the intermediary object
-                TryOnHistory.objects.create(user_profile=request.user.userprofile, item=item)
+        # Create the intermediary TryOnHistory object regardless
+        obj, created = TryOnHistory.objects.get_or_create(
+            user_profile=request.user.userprofile,
+            item=item
+        )
 
-        # Retrieve from the database
+        # If it already exists, update the timestamp.
+        if not created:
+            obj.date_tried_on = datetime.now()
+            obj.save()
+
         serializer = ItemSerializer(item)
         return Response(serializer.data)
 
@@ -167,8 +177,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         password = request.data['password']
 
         if not username or not email or not password:
-            detail = {'detail': 'Must provide username, password, and email'}
-            return Response(detail, status=status.HTTP_400_BAD_REQUEST)
+            response = {'detail': 'Must provide username, password, and email'}
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
         elif User.objects.filter(username=request.data['username']).exists():
             response = {'detail': 'User with such username already exists'}
             return Response(response, status=status.HTTP_409_CONFLICT)
@@ -179,3 +189,25 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         )
         user.save()
         return Response({'detail': 'User was successfully created'}, status=status.HTTP_201_CREATED)
+
+
+    '''
+    Override update because we want partial = True
+    and we need to access the actual Django User object itself.
+    '''
+
+    def update(self, request, pk=None):
+        user_profile = get_object_or_404(UserProfile, pk=pk)
+        user = user_profile.user
+
+        serializer = UserSerializer(user, data=request.data, partial=True)
+
+        try:
+            serializer.is_valid()
+            serializer.save()
+        except ValidationError:
+            logger.error(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            logger.debug(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)

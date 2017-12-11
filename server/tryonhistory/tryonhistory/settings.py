@@ -163,10 +163,14 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'TryOnHistory': {
+        'views': {
             'handlers': ['console', 'logfile'],
             'level': 'DEBUG',
         },
+        'models': {
+            'handlers': ['console', 'logfile'],
+            'level': 'DEBUG',
+        }
     }
 }
 

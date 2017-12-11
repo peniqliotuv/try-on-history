@@ -28,6 +28,11 @@ class OfferSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name')
+
 class UserProfileSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='pk', read_only=True)
     username = serializers.CharField(source='user.username', read_only=True)

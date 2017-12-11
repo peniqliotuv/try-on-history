@@ -19,7 +19,6 @@ item_list = views.ItemViewSet.as_view({
 
 '''
 GET: Retrieve infromation about specific item
-
 '''
 item_detail = views.ItemViewSet.as_view({
     'get': 'retrieve',
