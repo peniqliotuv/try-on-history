@@ -1,0 +1,18 @@
+sudo: false
+language: python
+cache: pip
+services:
+  - postgresql
+python:
+  - "3.6"
+  - "3.7-dev"
+  - "nightly"
+install:
+  - "pip install pipenv"
+  - "pipenv install --dev"
+before_script:
+  - psql -c 'CREATE DATABASE tryonhistory;' -U postgres
+  - psql -c 'CREATE USER test;' -U postgres
+  - psql -c 'ALTER USER test CREATEDB;' -U postgres
+script:
+  - pipenv run python3 manage.py test
