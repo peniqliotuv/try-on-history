@@ -5,6 +5,7 @@ exclude =
   server/settings.py,
   server/__init__.py,
   manage.py
+  app/*
 ignore =
   # We don't care about docstrings
   D100,

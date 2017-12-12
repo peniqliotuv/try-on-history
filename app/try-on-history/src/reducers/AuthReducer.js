@@ -3,6 +3,8 @@ import {
   loginSucceeded,
   loginFailed,
   setAuthToken,
+  signUpFailed,
+  logout,
 } from '../actions/AuthActions';
 
 const defaultState = {
@@ -22,7 +24,7 @@ export default handleActions({
   [loginFailed]: (state, action) => {
     return {
       ...state,
-      error: action.error,
+      error: action.payload.message,
     };
   },
   [setAuthToken]: (state, action) => {
@@ -31,4 +33,11 @@ export default handleActions({
       token: action.payload,
     };
   },
+  [signUpFailed]: (state, action) => {
+    return {
+      ...state,
+      error: action.payload.message,
+    };
+  },
+  [logout]: (state, action) => defaultState,
 }, defaultState);

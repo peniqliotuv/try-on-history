@@ -7,6 +7,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.serializers import ValidationError
+from rest_framework_jwt.settings import api_settings
 from .models import Item, UserProfile, Offer, TryOnHistory
 from .serializers import (
     UserProfileSerializer,
@@ -213,25 +214,33 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     '''
     Custom create_profile route to hit the post_save hook in the UserProfile model
+    Only requires a username or password. Email can be set later.
     '''
     def create_profile(self, request):
-        username = request.data['username']
-        email = request.data['email']
-        password = request.data['password']
-
-        if not username or not email or not password:
-            response = {'detail': 'Must provide username, password, and email'}
+        try:
+            username = request.data['username']
+            password = request.data['password']
+        except KeyError:
+            response = {'detail': 'Must provide username and password'}
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
-        elif User.objects.filter(username=request.data['username']).exists():
+        # Check for duplicate users
+        if User.objects.filter(username=username).exists():
             response = {'detail': 'User with such username already exists'}
             return Response(response, status=status.HTTP_409_CONFLICT)
         user = User.objects.create_user(
-            request.data['username'],
-            request.data['email'],
-            request.data['password'],
+            username,
+            None,
+            password,
         )
         user.save()
-        return Response({'detail': 'User was successfully created'}, status=status.HTTP_201_CREATED)
+
+        # Manually return the JWT token to be decoded client-side
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
+        payload = jwt_payload_handler(user)
+        token = jwt_encode_handler(payload)
+        return Response({'token': token}, status=status.HTTP_201_CREATED)
 
     '''
     Override update because we want partial = True

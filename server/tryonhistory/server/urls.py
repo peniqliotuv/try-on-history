@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.conf import settings
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.schemas import get_schema_view
 from rest_framework_swagger.views import get_swagger_view
@@ -54,6 +54,7 @@ history_detail = views.HistoryViewSet.as_view({
 urlpatterns = [
     url(r'^jwt-auth/$', obtain_jwt_token, name='jwt-auth'),
     url(r'^jwt-auth-refresh/$', refresh_jwt_token, name='jwt-auth-refresh'),
+    url(r'^jwt-auth-verify/$', verify_jwt_token, name='jwt-auth-verify'),
     url(r'^items/$', item_list, name='item-list'),
     url(r'^items/(?P<pk>[0-9]+)/$', item_detail, name='item-detail'),
     url(r'^items/(?P<pk>[0-9]+)/offers/$', item_detail_offers, name='item-detail-offers'),

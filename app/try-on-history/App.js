@@ -1,7 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
-import { composeWithDevTools } from 'remote-redux-devtools';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import rootReducer from './RootReducer';
@@ -19,7 +18,7 @@ const preloadedState = {
 export const store = createStore(
   rootReducer,
   preloadedState,
-  composeWithDevTools(
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(
     applyMiddleware(thunk),
     applyMiddleware(logger),
   ),

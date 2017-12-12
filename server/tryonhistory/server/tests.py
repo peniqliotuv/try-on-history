@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 # Create your tests here.
 
+
 class JsonWebTokenTest(TestCase):
 
     def setUp(self):
@@ -38,7 +39,6 @@ class JsonWebTokenTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, 'token')
 
-
     def test_get_jwt_invalid_cred(self):
         url = reverse('jwt-auth')
         response = self.client.post(url, {
@@ -47,7 +47,6 @@ class JsonWebTokenTest(TestCase):
         })
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_refresh_jwt_token(self):
         url = reverse('jwt-auth')

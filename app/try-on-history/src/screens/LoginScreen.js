@@ -9,13 +9,16 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/native';
-import { login, setAuthToken } from '../actions/AuthActions';
+import { login, loginWithAuthToken, setAuthToken, logout } from '../actions/AuthActions';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 
 
 const Container = styled.View`
   margin: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const InputField = styled.TextInput`
@@ -36,32 +39,47 @@ class LoginScreen extends Component {
       navigate: PropTypes.func.isRequired,
     }),
     login: PropTypes.func.isRequired,
+    logout: PropTypes.func.isRequired,
+    loginWithAuthToken: PropTypes.func.isRequired,
     setAuthToken: PropTypes.func.isRequired,
-  }
+  };
 
   state = {
     username: '',
     password: '',
-    loading: false,
-  }
+    isLoading: true,
+  };
 
   handleLogin = (email, password) => {
-    this.props.login(email, password);
-    this.setState({ loading: true });
-  }
+    // this.props.login(email, password);
+    // this.setState({ isLoading: true });
+    this.setState({ isLoading: true }, () => {
+      this.props.login(email, password);
+    })
+  };
+
+  handleLogout = () => {
+    this.setState({ isLoading: false }, () => {
+      this.props.logout();
+    });
+  };
 
   async componentWillMount() {
-    const token = await AsyncStorage.getItem('token');
-    console.log('token: ' + token);
+    console.log('Getting Token');
+    const token = JSON.parse(await AsyncStorage.getItem('token'));
     if (token) {
       this.props.setAuthToken(token);
+      this.props.loginWithAuthToken(token);
     }
+    console.log('Finished componentWillMount')
   }
 
   async componentWillReceiveProps(nextProps) {
     if (nextProps.token && nextProps.token !== this.props.token) {
       try {
+        console.log('Setting New Token')
         await AsyncStorage.setItem('token', JSON.stringify(nextProps.token));
+        // this.setState({ isLoading: false });
       } catch (e) {
         console.error('Error Saving the token');
       }
@@ -70,35 +88,48 @@ class LoginScreen extends Component {
   }
 
   render() {
-
-    if (!isEmpty(this.props.user)) {
+    if (this.state.isLoading && isEmpty(this.props.user)) {
+      console.log('Rendering activity Indicator')
+      return (
+        <Container>
+          <ActivityIndicator size='large' color="#0000ff"/>
+        </Container>
+      );
+    } else if (!isEmpty(this.props.user)) {
       // TODO
       const { username, user_id } = this.props.user;
+      console.log('Rendering user details');
       return (
         <Container>
           <Text>Success! {this.props.token}</Text>
           <Text>Username: {username}</Text>
           <Text>User ID: {user_id}</Text>
+          <TouchableOpacity
+            onPress={() => this.handleLogout()}
+          >
+            <Text>LOGOUT</Text>
+          </TouchableOpacity>
         </Container>
       )
     }
 
+    console.log('Rendering login screen')
     return (
       <Container>
         <Text>Not Logged In!</Text>
         <InputField
-          placeHolder='Username'
+          placeholder='Username'
           autocorrect={false}
           autoCapitalize='none'
-          placeHolderTextColor='black'
+          placeholderTextColor='black'
           onChangeText={(text) => this.setState({ username: text })}
           onSubmitEditing={() => this.passwordRef.focus()}
         />
         <InputField
-          placeHolder='Password'
+          placeholder='Password'
           autocorrect={false}
           autoCapitalize='none'
-          placeHolderTextColor='black'
+          placeholderTextColor='black'
           onChangeText={(text) => this.setState({ password: text })}
           secureTextEntry
           ref={input => this.passwordRef = input}
@@ -108,6 +139,12 @@ class LoginScreen extends Component {
         >
           <Text>SUBMIT</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate('SignUp')}
+        >
+          <Text>SIGN UP</Text>
+        </TouchableOpacity>
+
       </Container>
     )
   }
@@ -124,6 +161,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     login: (username, password) => dispatch(login(username, password)),
+    logout: () => dispatch(logout()),
+    loginWithAuthToken: (token) => dispatch(loginWithAuthToken(token)),
     setAuthToken: (token) => dispatch(setAuthToken(token)),
   };
 }

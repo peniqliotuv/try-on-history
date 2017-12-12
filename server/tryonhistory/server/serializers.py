@@ -18,8 +18,10 @@ class TryOnHistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TryOnHistory
-        fields = ('product_name', 'upc', 'date_purchased',
-            'date_tried_on', 'purchased',)
+        fields = (
+            'product_name', 'upc', 'date_purchased',
+            'date_tried_on', 'purchased',
+        )
 
 
 class OfferSerializer(serializers.ModelSerializer):
