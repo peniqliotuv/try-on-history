@@ -180,6 +180,10 @@ JWT_AUTH = {
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=30),
 }
 
+SWAGGER_SETTINGS = {
+    'JSON_EDITOR': True,
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 

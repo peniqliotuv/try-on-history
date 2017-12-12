@@ -1,6 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
+import { composeWithDevTools } from 'remote-redux-devtools';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import rootReducer from './RootReducer';
@@ -10,15 +11,15 @@ const preloadedState = {
   auth: {
     user: {},
     error: '',
+    token: '',
   }
 }
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export const store = createStore(
   rootReducer,
   preloadedState,
-  composeEnhancers(
+  composeWithDevTools(
     applyMiddleware(thunk),
     applyMiddleware(logger),
   ),
