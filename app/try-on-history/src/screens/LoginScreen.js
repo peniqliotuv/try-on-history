@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   View,
   Text,
@@ -7,22 +7,25 @@ import {
   ActivityIndicator,
   AsyncStorage,
 } from 'react-native';
+import { TextField } from '../globals/styled-components';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/native';
 import { login, loginWithAuthToken, setAuthToken, logout } from '../actions/AuthActions';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
+import colors from '../globals/colors';
 
 
 const Container = styled.View`
-  margin: 20px;
-  display: flex;
+  padding: 20px;
+  flex: 1;
   flex-direction: column;
   justify-content: center;
+  background-color: ${colors.cobaltBlue};
 `;
 
 const InputField = styled.TextInput`
-  border: 1px solid black;
+  border: 1px solid ${colors.white};
   margin: 20px;
   height: 40px;
   font-size: 20px;
@@ -51,8 +54,6 @@ class LoginScreen extends Component {
   };
 
   handleLogin = (email, password) => {
-    // this.props.login(email, password);
-    // this.setState({ isLoading: true });
     this.setState({ isLoading: true }, () => {
       this.props.login(email, password);
     })
@@ -79,35 +80,71 @@ class LoginScreen extends Component {
       try {
         console.log('Setting New Token')
         await AsyncStorage.setItem('token', JSON.stringify(nextProps.token));
-        // this.setState({ isLoading: false });
       } catch (e) {
         console.error('Error Saving the token');
       }
+    } else if (nextProps.error && nextProps.error !== this.props.error) {
+      this.setState({ isLoading: false });
+    }
+  }
+
+  renderContentBody = () => {
+    if (this.state.isLoading && isEmpty(this.props.user)) {
+      console.log('Rendering activity Indicator')
+      return (
+          <ActivityIndicator size='large' color="#0000ff"/>
+      );
+    } else {
+      return (
+        <View>
+          <TextField>Not Logged In!</TextField>
+          <InputField
+            placeholder='Username'
+            autocorrect={false}
+            autoCapitalize='none'
+            placeholderTextColor='black'
+            onChangeText={(text) => this.setState({ username: text })}
+            onSubmitEditing={() => this.passwordRef.focus()}
+          />
+          <InputField
+            placeholder='Password'
+            autocorrect={false}
+            autoCapitalize='none'
+            placeholderTextColor='black'
+            onChangeText={(text) => this.setState({ password: text })}
+            secureTextEntry
+            ref={input => this.passwordRef = input}
+          />
+          <TouchableOpacity
+            onPress={() => this.handleLogin(this.state.username, this.state.password)}
+          >
+            <Text>SUBMIT</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('SignUp')}
+          >
+            <Text>SIGN UP</Text>
+          </TouchableOpacity>
+        </View>
+      );
 
     }
   }
 
   render() {
-    if (this.state.isLoading && isEmpty(this.props.user)) {
-      console.log('Rendering activity Indicator')
-      return (
-        <Container>
-          <ActivityIndicator size='large' color="#0000ff"/>
-        </Container>
-      );
-    } else if (!isEmpty(this.props.user)) {
-      // TODO
+    if (!isEmpty(this.props.user)) {
+      // If the user is logged in
       const { username, user_id } = this.props.user;
       console.log('Rendering user details');
       return (
         <Container>
-          <Text>Success! {this.props.token}</Text>
-          <Text>Username: {username}</Text>
-          <Text>User ID: {user_id}</Text>
+          <TextField fontSize='24px'>Success! {this.props.token}</TextField>
+          <TextField>Username: {username}</TextField>
+          <TextField>User ID: {user_id}</TextField>
           <TouchableOpacity
             onPress={() => this.handleLogout()}
           >
-            <Text>LOGOUT</Text>
+            <TextField>LOGOUT</TextField>
           </TouchableOpacity>
         </Container>
       )
@@ -116,35 +153,7 @@ class LoginScreen extends Component {
     console.log('Rendering login screen')
     return (
       <Container>
-        <Text>Not Logged In!</Text>
-        <InputField
-          placeholder='Username'
-          autocorrect={false}
-          autoCapitalize='none'
-          placeholderTextColor='black'
-          onChangeText={(text) => this.setState({ username: text })}
-          onSubmitEditing={() => this.passwordRef.focus()}
-        />
-        <InputField
-          placeholder='Password'
-          autocorrect={false}
-          autoCapitalize='none'
-          placeholderTextColor='black'
-          onChangeText={(text) => this.setState({ password: text })}
-          secureTextEntry
-          ref={input => this.passwordRef = input}
-        />
-        <TouchableOpacity
-          onPress={() => this.handleLogin(this.state.username, this.state.password)}
-        >
-          <Text>SUBMIT</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => this.props.navigation.navigate('SignUp')}
-        >
-          <Text>SIGN UP</Text>
-        </TouchableOpacity>
-
+        { this.renderContentBody() }
       </Container>
     )
   }

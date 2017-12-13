@@ -3,7 +3,6 @@ import config from '~/config';
 import jwtDecode from 'jwt-decode';
 import { createPostOptions } from '../utils/ajax';
 
-
 export const loginSucceeded = createAction('LOGIN_SUCCEEDED');
 export const loginFailed = createAction('LOGIN_FAILED');
 export const setAuthToken = createAction('SET_AUTH_TOKEN');
@@ -44,11 +43,13 @@ export const loginWithAuthToken = (token) => {
     } else {
       res = await fetch(`${config.hostname}/api/jwt-auth-refresh/`, options);
       try {
+        console.log(res.status);
         const { token: newToken } = await res.json();
         const payload = { user: jwtDecode(newToken), token: newToken };
         dispatch(loginSucceeded(payload));
+
       } catch (e) {
-        console.log(e);
+        dispatch(loginFailed(e));
       }
     }
   }
