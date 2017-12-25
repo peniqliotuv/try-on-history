@@ -10,7 +10,13 @@ import {
 import { Text } from '../globals/styled-components';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/native';
-import { login, loginWithAuthToken, setAuthToken, logout } from '../actions/AuthActions';
+import {
+  login,
+  loginWithAuthToken,
+  setAuthToken,
+  logout,
+  clearError,
+} from '../actions/AuthActions';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 import colors from '../globals/colors';
@@ -41,8 +47,13 @@ class LoginScreen extends Component {
     navigation: PropTypes.shape({
       navigate: PropTypes.func.isRequired,
     }),
+    reduxNavigationState: PropTypes.shape({
+      index: PropTypes.number.isRequired,
+      routes: PropTypes.array.isRequired,
+    }),
     login: PropTypes.func.isRequired,
     logout: PropTypes.func.isRequired,
+    clearError: PropTypes.func.isRequired,
     // loginWithAuthToken: PropTypes.func.isRequired,
     // setAuthToken: PropTypes.func.isRequired,
   };
@@ -65,6 +76,11 @@ class LoginScreen extends Component {
     });
   };
 
+  handleNavigateToSignUp = () => {
+    this.props.navigation.navigate('SignUp');
+    this.props.clearError();
+  }
+
   // async componentWillMount() {
   //   console.log('Getting Token');
   //   const token = JSON.parse(await AsyncStorage.getItem('token'));
@@ -78,6 +94,7 @@ class LoginScreen extends Component {
   async componentWillReceiveProps(nextProps) {
     // If a JWT was successfully returned from the server
     console.log(nextProps);
+    const { routes, index } = nextProps.reduxNavigationState;
     if (nextProps.token && nextProps.token !== this.props.token) {
       try {
         console.log('Setting New Token')
@@ -85,7 +102,7 @@ class LoginScreen extends Component {
       } catch (e) {
         console.error('Error Saving the token');
       }
-    } else if (nextProps.error) {
+    } else if (nextProps.error && routes[index].routeName === 'Login') {
       Alert.alert(
         'Invalid Login',
         nextProps.error,
@@ -130,7 +147,7 @@ class LoginScreen extends Component {
             <Text>SUBMIT</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('SignUp')}
+            onPress={this.handleNavigateToSignUp}
           >
             <Text>SIGN UP</Text>
           </TouchableOpacity>
@@ -169,10 +186,13 @@ class LoginScreen extends Component {
 };
 
 const mapStateToProps = (state) => {
+  // Extract the current navigation state from the redux store
+  const { routes, index } = state.navigation;
   return {
     user: state.auth.user,
     error: state.auth.error,
     token: state.auth.token,
+    reduxNavigationState: routes[index],
   };
 }
 
@@ -180,6 +200,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     login: (username, password) => dispatch(login(username, password)),
     logout: () => dispatch(logout()),
+    clearError: () => dispatch(clearError()),
     // loginWithAuthToken: (token) => dispatch(loginWithAuthToken(token)),
     // setAuthToken: (token) => dispatch(setAuthToken(token)),
   };

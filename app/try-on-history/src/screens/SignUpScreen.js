@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   AsyncStorage,
 } from 'react-native';
-import { backAction } from '../navigation/LoginNavigator';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';

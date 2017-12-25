@@ -7,6 +7,7 @@ export const loginSucceeded = createAction('LOGIN_SUCCEEDED');
 export const loginFailed = createAction('LOGIN_FAILED');
 export const setAuthToken = createAction('SET_AUTH_TOKEN');
 export const signUpFailed = createAction('SIGNUP_FAILED');
+export const clearError = createAction('CLEAR_ERROR');
 export const logout = createAction('LOGOUT');
 
 export const login = (username, password) => {

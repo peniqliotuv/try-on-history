@@ -1,6 +1,8 @@
-import React from 'react';
-import { Provider } from 'react-redux';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Provider, connect } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
+import { addNavigationHelpers } from 'react-navigation';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import rootReducer from './RootReducer';
@@ -12,8 +14,7 @@ const preloadedState = {
     error: '',
     token: '',
   }
-}
-
+};
 
 export const store = createStore(
   rootReducer,
@@ -24,11 +25,30 @@ export const store = createStore(
   ),
 );
 
+class Root extends Component {
+
+  static propTypes = {
+    navigation: PropTypes.object.isRequired,
+    dispatch: PropTypes.func.isRequired,
+  };
+
+  render() {
+    return (
+      <AppNavigator navigation={addNavigationHelpers({
+        dispatch: this.props.dispatch,
+        state: this.props.navigation,
+      })} />
+    );
+  }
+};
+
+// Overwrite the navigation prop with our redux store's navigation
+const RootWithState = connect((state) => ({ navigation: state.navigation }))(Root);
+
 const App = () => (
   <Provider store={store}>
-    <AppNavigator />
+    <RootWithState />
   </Provider>
 )
 
 export default App;
-

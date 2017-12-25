@@ -5,6 +5,7 @@ import {
   setAuthToken,
   signUpFailed,
   logout,
+  clearError,
 } from '../actions/AuthActions';
 
 const defaultState = {
@@ -37,6 +38,12 @@ export default handleActions({
     return {
       ...state,
       error: action.payload.message,
+    };
+  },
+  [clearError]: (state, action) => {
+    return {
+      ...state,
+      error: '',
     };
   },
   [logout]: (state, action) => defaultState,
