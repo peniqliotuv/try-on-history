@@ -94,6 +94,10 @@ class LoginScreen extends Component {
     }
   }
 
+  componentWillUnmount() {
+    console.log('unmounting')
+  }
+
   renderContentBody = () => {
     if (this.state.isLoading && isEmpty(this.props.user)) {
       return (
