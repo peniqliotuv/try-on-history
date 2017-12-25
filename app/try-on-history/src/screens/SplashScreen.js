@@ -24,7 +24,7 @@ class SplashScreen extends Component {
       this.props.setAuthToken(token);
       this.props.loginWithAuthToken(token);
     }
-    console.log('Finished componentWillMount')
+    console.log('Finished componentWillMount');
   }
 
   componentWillReceiveProps(nextProps, nextState) {
@@ -51,14 +51,14 @@ const mapStateToProps = (state) => {
     error: state.auth.error,
     token: state.auth.token,
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
     loginWithAuthToken: (token) => dispatch(loginWithAuthToken(token)),
     setAuthToken: (token) => dispatch(setAuthToken(token)),
   };
-}
+};
 
 export default connect(
   mapStateToProps, mapDispatchToProps

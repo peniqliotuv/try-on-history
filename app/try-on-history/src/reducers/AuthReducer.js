@@ -9,9 +9,9 @@ import {
 } from '../actions/AuthActions';
 
 const defaultState = {
-  'user': {},
-  'error': '',
-  'token': '',
+  user: {},
+  error: '',
+  token: '',
 };
 
 export default handleActions({

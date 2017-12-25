@@ -30,8 +30,8 @@ export const login = (username, password) => {
     } catch (e) {
       // res.json failed
     }
-  }
-}
+  };
+};
 
 // Call this if app is launching and we only have the auth token, not the user instanc
 export const loginWithAuthToken = (token) => {
@@ -48,13 +48,12 @@ export const loginWithAuthToken = (token) => {
         const { token: newToken } = await res.json();
         const payload = { user: jwtDecode(newToken), token: newToken };
         dispatch(loginSucceeded(payload));
-
       } catch (e) {
         dispatch(loginFailed(e));
       }
     }
-  }
-}
+  };
+};
 
 
 export const signUp = (username, password) => {
@@ -67,7 +66,7 @@ export const signUp = (username, password) => {
         // need to make the server return the user object as well
         const { token } = json;
         const payload = { user: jwtDecode(token), token };
-        dispatch(loginSucceeded(payload))
+        dispatch(loginSucceeded(payload));
       } else {
         dispatch(signUpFailed(new Error(json.detail)));
       }
@@ -75,5 +74,5 @@ export const signUp = (username, password) => {
       console.error(e);
       // ??
     }
-  }
-}
+  };
+};

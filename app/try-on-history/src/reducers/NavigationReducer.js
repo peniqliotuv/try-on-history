@@ -1,4 +1,4 @@
-import { addNavigationHelpers, NavigationActions } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 import AppNavigator from '../../AppNavigator';
 
 let initialState = AppNavigator.router.getStateForAction(NavigationActions.init());
