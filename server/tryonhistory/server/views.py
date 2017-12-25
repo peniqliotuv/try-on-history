@@ -220,13 +220,18 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         try:
             username = request.data['username']
             password = request.data['password']
+            if not username or not password:
+                raise KeyError
         except KeyError:
             response = {'detail': 'Must provide username and password'}
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
         # Check for duplicate users
         if User.objects.filter(username=username).exists():
             response = {'detail': 'User with such username already exists'}
             return Response(response, status=status.HTTP_409_CONFLICT)
+        logger.debug(username)
+        logger.debug(password)
         user = User.objects.create_user(
             username,
             None,

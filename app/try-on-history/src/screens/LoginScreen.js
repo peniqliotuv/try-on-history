@@ -1,13 +1,13 @@
 import React, { Component, Fragment } from 'react';
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
   AsyncStorage,
+  Alert,
 } from 'react-native';
-import { TextField } from '../globals/styled-components';
+import { Text } from '../globals/styled-components';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/native';
 import { login, loginWithAuthToken, setAuthToken, logout } from '../actions/AuthActions';
@@ -43,14 +43,14 @@ class LoginScreen extends Component {
     }),
     login: PropTypes.func.isRequired,
     logout: PropTypes.func.isRequired,
-    loginWithAuthToken: PropTypes.func.isRequired,
-    setAuthToken: PropTypes.func.isRequired,
+    // loginWithAuthToken: PropTypes.func.isRequired,
+    // setAuthToken: PropTypes.func.isRequired,
   };
 
   state = {
     username: '',
     password: '',
-    isLoading: true,
+    isLoading: false,
   };
 
   handleLogin = (email, password) => {
@@ -65,17 +65,19 @@ class LoginScreen extends Component {
     });
   };
 
-  async componentWillMount() {
-    console.log('Getting Token');
-    const token = JSON.parse(await AsyncStorage.getItem('token'));
-    if (token) {
-      this.props.setAuthToken(token);
-      this.props.loginWithAuthToken(token);
-    }
-    console.log('Finished componentWillMount')
-  }
+  // async componentWillMount() {
+  //   console.log('Getting Token');
+  //   const token = JSON.parse(await AsyncStorage.getItem('token'));
+  //   if (token) {
+  //     this.props.setAuthToken(token);
+  //     this.props.loginWithAuthToken(token);
+  //   }
+  //   console.log('Finished componentWillMount')
+  // }
 
   async componentWillReceiveProps(nextProps) {
+    // If a JWT was successfully returned from the server
+    console.log(nextProps);
     if (nextProps.token && nextProps.token !== this.props.token) {
       try {
         console.log('Setting New Token')
@@ -83,21 +85,24 @@ class LoginScreen extends Component {
       } catch (e) {
         console.error('Error Saving the token');
       }
-    } else if (nextProps.error && nextProps.error !== this.props.error) {
+    } else if (nextProps.error) {
+      Alert.alert(
+        'Invalid Login',
+        nextProps.error,
+      );
       this.setState({ isLoading: false });
     }
   }
 
   renderContentBody = () => {
     if (this.state.isLoading && isEmpty(this.props.user)) {
-      console.log('Rendering activity Indicator')
       return (
           <ActivityIndicator size='large' color="#0000ff"/>
       );
     } else {
       return (
         <View>
-          <TextField>Not Logged In!</TextField>
+          <Text>Not Logged In!</Text>
           <InputField
             placeholder='Username'
             autocorrect={false}
@@ -134,23 +139,23 @@ class LoginScreen extends Component {
   render() {
     if (!isEmpty(this.props.user)) {
       // If the user is logged in
+      // Change this to redirect later
       const { username, user_id } = this.props.user;
       console.log('Rendering user details');
       return (
         <Container>
-          <TextField fontSize='24px'>Success! {this.props.token}</TextField>
-          <TextField>Username: {username}</TextField>
-          <TextField>User ID: {user_id}</TextField>
+          <Text fontSize='24px'>Success! {this.props.token}</Text>
+          <Text>Username: {username}</Text>
+          <Text>User ID: {user_id}</Text>
           <TouchableOpacity
             onPress={() => this.handleLogout()}
           >
-            <TextField>LOGOUT</TextField>
+            <Text>LOGOUT CURRENT USER</Text>
           </TouchableOpacity>
         </Container>
       )
     }
 
-    console.log('Rendering login screen')
     return (
       <Container>
         { this.renderContentBody() }
@@ -171,12 +176,16 @@ const mapDispatchToProps = (dispatch) => {
   return {
     login: (username, password) => dispatch(login(username, password)),
     logout: () => dispatch(logout()),
-    loginWithAuthToken: (token) => dispatch(loginWithAuthToken(token)),
-    setAuthToken: (token) => dispatch(setAuthToken(token)),
+    // loginWithAuthToken: (token) => dispatch(loginWithAuthToken(token)),
+    // setAuthToken: (token) => dispatch(setAuthToken(token)),
   };
 }
 
+// The "pure" parameter allows us to prevent being stuck in an infinitely loading state
+// if the user provides incorrect credentials twice.
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
+  null,
+  { pure: false },
 )(LoginScreen);

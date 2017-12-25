@@ -8,10 +8,12 @@ import {
   ActivityIndicator,
   AsyncStorage,
 } from 'react-native';
-import { signUp } from '../actions/AuthActions';
-import styled from 'styled-components/native';
+import { backAction } from '../navigation/LoginNavigator';
+import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
+import styled from 'styled-components/native';
+import { signUp } from '../actions/AuthActions';
 
 const Container = styled.View`
   margin: 20px;
@@ -88,6 +90,10 @@ class SignUpScreen extends Component {
         <TouchableOpacity
           onPress={() => this.handleSignUp(this.state.username, this.state.password)}>
           <Text>SIGN UP</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.dispatch(NavigationActions.back())}>
+          <Text>GO BACK</Text>
         </TouchableOpacity>
       </Container>
     )
