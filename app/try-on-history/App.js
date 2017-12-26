@@ -13,7 +13,7 @@ const preloadedState = {
     user: {},
     error: '',
     token: '',
-  }
+  },
 };
 
 export const store = createStore(
@@ -26,7 +26,6 @@ export const store = createStore(
 );
 
 class Root extends Component {
-
   static propTypes = {
     navigation: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
@@ -35,12 +34,13 @@ class Root extends Component {
   render() {
     return (
       <AppNavigator navigation={addNavigationHelpers({
-        dispatch: this.props.dispatch,
-        state: this.props.navigation,
-      })} />
+          dispatch: this.props.dispatch,
+          state: this.props.navigation,
+        })}
+      />
     );
   }
-};
+}
 
 // Overwrite the navigation prop with our redux store's navigation
 const RootWithState = connect((state) => ({ navigation: state.navigation }))(Root);

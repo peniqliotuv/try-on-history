@@ -13,8 +13,6 @@ import styled from 'styled-components/native';
 import { Text } from '../globals/styled-components';
 import {
   login,
-  // loginWithAuthToken,
-  // setAuthToken,
   logout,
   clearError,
 } from '../actions/AuthActions';
@@ -52,8 +50,6 @@ class LoginScreen extends Component {
     login: PropTypes.func.isRequired,
     logout: PropTypes.func.isRequired,
     clearError: PropTypes.func.isRequired,
-    // loginWithAuthToken: PropTypes.func.isRequired,
-    // setAuthToken: PropTypes.func.isRequired,
   };
 
   state = {
@@ -82,10 +78,6 @@ class LoginScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
-    console.log('unmounting');
-  }
-
   handleLogin = (email, password) => {
     this.setState({ isLoading: true }, () => {
       this.props.login(email, password);
@@ -102,16 +94,6 @@ class LoginScreen extends Component {
     this.props.navigation.navigate('SignUp');
     this.props.clearError();
   }
-
-  // async componentWillMount() {
-  //   console.log('Getting Token');
-  //   const token = JSON.parse(await AsyncStorage.getItem('token'));
-  //   if (token) {
-  //     this.props.setAuthToken(token);
-  //     this.props.loginWithAuthToken(token);
-  //   }
-  //   console.log('Finished componentWillMount')
-  // }
 
   renderContentBody = () => {
     if (this.state.isLoading && isEmpty(this.props.user)) {
@@ -197,8 +179,6 @@ const mapDispatchToProps = (dispatch) => {
     login: (username, password) => dispatch(login(username, password)),
     logout: () => dispatch(logout()),
     clearError: () => dispatch(clearError()),
-    // loginWithAuthToken: (token) => dispatch(loginWithAuthToken(token)),
-    // setAuthToken: (token) => dispatch(setAuthToken(token)),
   };
 };
 

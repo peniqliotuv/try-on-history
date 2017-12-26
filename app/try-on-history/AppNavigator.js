@@ -1,16 +1,18 @@
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import LoginNavigator from './src/navigation/LoginNavigator';
+import SplashScreen from './src/screens/SplashScreen';
 // import MainNavigator from './src/navigation/MainNavigator';
 
 const AppNavigator = StackNavigator({
   Login: { screen: LoginNavigator },
+  Splash: { screen: SplashScreen },
   // Main: { screen: MainNavigator },
 }, {
   headerMode: 'none',
-  initialRouteName: 'Login',
+  initialRouteName: 'Splash',
 });
 
-// Stupid workaround
+// Workaround to make sure that we don't get duplicate screens with nested navigators
 const navigateOnce = (getStateForAction) => (action, state) => {
   const { type, routeName } = action;
   return (
@@ -18,7 +20,6 @@ const navigateOnce = (getStateForAction) => (action, state) => {
     type === NavigationActions.NAVIGATE &&
     routeName === state.routes[state.routes.length - 1].routeName
   ) ? state : getStateForAction(action, state);
-  // you might want to replace 'null' with 'state' if you're using redux (see comments below)
 };
 
 AppNavigator.router.getStateForAction = navigateOnce(AppNavigator.router.getStateForAction);

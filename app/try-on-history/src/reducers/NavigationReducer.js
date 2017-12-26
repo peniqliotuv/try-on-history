@@ -3,7 +3,7 @@ import AppNavigator from '../../AppNavigator';
 
 let initialState = AppNavigator.router.getStateForAction(NavigationActions.init());
 
-const firstAction = AppNavigator.router.getActionForPathAndParams('Login');
+const firstAction = AppNavigator.router.getActionForPathAndParams('Splash');
 
 initialState = AppNavigator.router.getStateForAction(
   firstAction,
