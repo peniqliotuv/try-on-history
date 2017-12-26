@@ -10,22 +10,13 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/native';
-import { Text } from '../globals/styled-components';
+import { StyledText, Container } from '../globals/styled-components';
 import {
   login,
   logout,
   clearError,
 } from '../actions/AuthActions';
 import colors from '../globals/colors';
-
-
-const Container = styled.View`
-  padding: 20px;
-  flex: 1;
-  flex-direction: column;
-  justify-content: center;
-  background-color: ${colors.cobaltBlue};
-`;
 
 const InputField = styled.TextInput`
   border: 1px solid ${colors.white};
@@ -103,7 +94,7 @@ class LoginScreen extends Component {
     }
     return (
       <View>
-        <Text>Not Logged In!</Text>
+        <StyledText>Not Logged In!</StyledText>
         <InputField
           placeholder='Username'
           autocorrect={false}
@@ -124,12 +115,12 @@ class LoginScreen extends Component {
         <TouchableOpacity
           onPress={() => this.handleLogin(this.state.username, this.state.password)}
         >
-          <Text>SUBMIT</Text>
+          <StyledText>SUBMIT</StyledText>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={this.handleNavigateToSignUp}
         >
-          <Text>SIGN UP</Text>
+          <StyledText>SIGN UP</StyledText>
         </TouchableOpacity>
       </View>
     );
@@ -143,13 +134,13 @@ class LoginScreen extends Component {
       console.log('Rendering user details');
       return (
         <Container>
-          <Text fontSize='24px'>Success! {this.props.token}</Text>
-          <Text>Username: {username}</Text>
-          <Text>User ID: {user_id}</Text>
+          <StyledText fontSize='24px'>Success! {this.props.token}</StyledText>
+          <StyledText>Username: {username}</StyledText>
+          <StyledText>User ID: {user_id}</StyledText>
           <TouchableOpacity
             onPress={() => this.handleLogout()}
           >
-            <Text>LOGOUT CURRENT USER</Text>
+            <StyledText>LOGOUT CURRENT USER</StyledText>
           </TouchableOpacity>
         </Container>
       );

@@ -25,6 +25,7 @@ export default handleActions({
   [loginFailed]: (state, action) => {
     return {
       ...state,
+      token: '',
       error: action.payload.message,
     };
   },
@@ -40,11 +41,11 @@ export default handleActions({
       error: action.payload.message,
     };
   },
-  [clearError]: (state, action) => {
+  [clearError]: (state) => {
     return {
       ...state,
       error: '',
     };
   },
-  [logout]: (state, action) => defaultState,
+  [logout]: (state) => defaultState,
 }, defaultState);

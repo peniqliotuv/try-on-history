@@ -37,9 +37,9 @@ class SignUpScreen extends Component {
     navigation: PropTypes.object.isRequired,
     token: PropTypes.string.isRequired,
     reduxNavigationState: PropTypes.shape({
-      index: PropTypes.number.isRequired,
-      routes: PropTypes.array.isRequired,
-    }),
+      index: PropTypes.number,
+      routes: PropTypes.array,
+    }).isRequired,
   };
 
   state = {
@@ -80,15 +80,13 @@ class SignUpScreen extends Component {
 
   render() {
     if (this.state.isLoading && isEmpty(this.props.user)) {
-      console.log('Rendering activity Indicator')
       return (
         <Container>
           <Text>Signing Up...</Text>
-          <ActivityIndicator size='large' color='#0000ff'/>
+          <ActivityIndicator size='large' color='#0000ff' />
         </Container>
       );
     } else if (!isEmpty(this.props.user)) {
-      console.log('Rendering user details');
       return (
         <Container>
           <Text>SUCCESSFUL SIGNUP!</Text>
