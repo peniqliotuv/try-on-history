@@ -1,11 +1,13 @@
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import LoginNavigator from './src/navigation/LoginNavigator';
 import SplashScreen from './src/screens/SplashScreen';
+import HomeScreen from './src/screens/HomeScreen';
 // import MainNavigator from './src/navigation/MainNavigator';
 
 const AppNavigator = StackNavigator({
   Login: { screen: LoginNavigator },
   Splash: { screen: SplashScreen },
+  Home: { screen: HomeScreen },
   // Main: { screen: MainNavigator },
 }, {
   headerMode: 'none',

@@ -13,7 +13,6 @@ import styled from 'styled-components/native';
 import { StyledText, Container } from '../globals/styled-components';
 import {
   login,
-  logout,
   clearError,
 } from '../actions/AuthActions';
 import colors from '../globals/colors';
@@ -35,11 +34,10 @@ class LoginScreen extends Component {
       navigate: PropTypes.func.isRequired,
     }),
     reduxNavigationState: PropTypes.shape({
-      index: PropTypes.number.isRequired,
-      routes: PropTypes.array.isRequired,
-    }),
+      index: PropTypes.number,
+      routes: PropTypes.array,
+    }).isRequired,
     login: PropTypes.func.isRequired,
-    logout: PropTypes.func.isRequired,
     clearError: PropTypes.func.isRequired,
   };
 
@@ -67,17 +65,21 @@ class LoginScreen extends Component {
       );
       this.setState({ isLoading: false });
     }
+
+    if (!isEmpty(nextProps.user)) {
+      // this.props.navigation.navigate('Home');
+      // this.props.navigation.dispatch(NavigationActions.navigate({
+      //         routeName: 'Home',
+      //         params: {},
+      //         // action: NavigationActions.navigate({ routeName: 'SignUp' }),
+      //       }));
+      this.setState({ isLoading: false });
+    }
   }
 
   handleLogin = (email, password) => {
     this.setState({ isLoading: true }, () => {
       this.props.login(email, password);
-    });
-  };
-
-  handleLogout = () => {
-    this.setState({ isLoading: false }, () => {
-      this.props.logout();
     });
   };
 
@@ -96,6 +98,7 @@ class LoginScreen extends Component {
       <View>
         <StyledText>Not Logged In!</StyledText>
         <InputField
+          autoFocus
           placeholder='Username'
           autocorrect={false}
           autoCapitalize='none'
@@ -127,25 +130,6 @@ class LoginScreen extends Component {
   }
 
   render() {
-    if (!isEmpty(this.props.user)) {
-      // If the user is logged in
-      // Change this to redirect later
-      const { username, user_id } = this.props.user;
-      console.log('Rendering user details');
-      return (
-        <Container>
-          <StyledText fontSize='24px'>Success! {this.props.token}</StyledText>
-          <StyledText>Username: {username}</StyledText>
-          <StyledText>User ID: {user_id}</StyledText>
-          <TouchableOpacity
-            onPress={() => this.handleLogout()}
-          >
-            <StyledText>LOGOUT CURRENT USER</StyledText>
-          </TouchableOpacity>
-        </Container>
-      );
-    }
-
     return (
       <Container>
         { this.renderContentBody() }
@@ -168,7 +152,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     login: (username, password) => dispatch(login(username, password)),
-    logout: () => dispatch(logout()),
     clearError: () => dispatch(clearError()),
   };
 };

@@ -47,5 +47,11 @@ export default handleActions({
       error: '',
     };
   },
-  [logout]: (state) => defaultState,
+  [logout]: (state) => {
+    return {
+      ...state,
+      user: {},
+      token: '',
+    };
+  },
 }, defaultState);

@@ -13,8 +13,13 @@ export const logout = createAction('LOGOUT');
 export const login = (username, password) => {
   return async (dispatch) => {
     const options = createPostOptions({ username, password });
-    const res = await fetch(`${config.hostname}/api/jwt-auth/`, options);
+    try {
 
+
+      const res = await fetch(`${config.hostname}/api/jwt-auth/`, options);
+    } catch (e) {
+      console.log(e);
+    }
     try {
       const json = await res.json();
       if (res.status === 200) {

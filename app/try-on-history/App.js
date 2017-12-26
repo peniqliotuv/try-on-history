@@ -16,10 +16,15 @@ const preloadedState = {
   },
 };
 
+
+
 export const store = createStore(
   rootReducer,
   preloadedState,
-  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__(
+    applyMiddleware(thunk),
+    applyMiddleware(logger),
+  ) : compose(
     applyMiddleware(thunk),
     applyMiddleware(logger),
   ),

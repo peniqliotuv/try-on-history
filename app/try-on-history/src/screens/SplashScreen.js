@@ -40,6 +40,7 @@ class SplashScreen extends Component {
     console.log('ComponentWillReceiveProps in Splash Screen');
     if (!isEmpty(nextProps.user)) {
       console.log('Navigating to Main Screen');
+      this.props.navigation.navigate('Home');
     } else if (nextProps.error && nextProps.error !== this.props.error) {
       console.log('Navigating to the Login Screen');
       await AsyncStorage.removeItem('token');

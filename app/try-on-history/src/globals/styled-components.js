@@ -2,7 +2,7 @@ import styled from 'styled-components/native';
 import colors from './colors';
 
 // Helper functions to add margin and padding props
-const createMarginFromProps = (props, defaultMargin = '0') => {
+const createMarginFromProps = (props, defaultMargin = 0) => {
   return (`
     margin-left: ${props.marginLeft || defaultMargin};
     margin-right: ${props.marginRight || defaultMargin};
@@ -11,7 +11,7 @@ const createMarginFromProps = (props, defaultMargin = '0') => {
   `);
 };
 
-const createPaddingFromProps = (props, defaultPadding = '0') => {
+const createPaddingFromProps = (props, defaultPadding = 0) => {
   return (`
     padding-left: ${props.paddingLeft || defaultPadding};
     padding-right: ${props.paddingRight || defaultPadding};
