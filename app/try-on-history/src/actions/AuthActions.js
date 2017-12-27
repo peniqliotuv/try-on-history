@@ -12,28 +12,27 @@ export const logout = createAction('LOGOUT');
 
 export const login = (username, password) => {
   return async (dispatch) => {
-    const options = createPostOptions({ username, password });
     try {
-
-
+      const options = createPostOptions({ username, password });
       const res = await fetch(`${config.hostname}/api/jwt-auth/`, options);
-    } catch (e) {
-      console.log(e);
-    }
-    try {
-      const json = await res.json();
-      if (res.status === 200) {
-        const { token } = json;
-        const payload = { user: jwtDecode(token), token };
-        dispatch(loginSucceeded(payload));
-      } else if (json.non_field_errors) {
-        // Invalid username and password
-        dispatch(loginFailed(new Error(json.non_field_errors[0])));
-      } else {
-        dispatch(loginFailed(new Error('Must provide username and password')));
+
+      try {
+        const json = await res.json();
+        if (res.status === 200) {
+          const { token } = json;
+          const payload = { user: jwtDecode(token), token };
+          dispatch(loginSucceeded(payload));
+        } else if (json.non_field_errors) {
+          // Invalid username and password
+          dispatch(loginFailed(new Error(json.non_field_errors[0])));
+        } else {
+          dispatch(loginFailed(new Error('Must provide username and password')));
+        }
+      } catch (e) {
+        // res.json failed
       }
     } catch (e) {
-      // res.json failed
+      console.log(e);
     }
   };
 };
