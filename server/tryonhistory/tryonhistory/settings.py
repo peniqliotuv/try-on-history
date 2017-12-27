@@ -27,7 +27,10 @@ SECRET_KEY = 'hund*+r^i^qsxy*jlf!3y)zglm90l5l+*gnm$wg6m$97zuba(5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'tryonhistory.herokuapp.com'
+]
 
 
 # Application definition
