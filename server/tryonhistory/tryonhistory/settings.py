@@ -208,7 +208,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_ROOT determins where the static assets are created when you run python3 manage.py collectstatic
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_URL is where the static files are in relation to settings.oty
 STATIC_URL = '/static/'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
