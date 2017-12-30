@@ -11,7 +11,7 @@ logger = logging.getLogger('models')
 
 
 class Item(models.Model):
-    upc = models.CharField(max_length=12, null=False, primary_key=True)
+    upc = models.CharField(max_length=13, null=False, primary_key=True)
     product_name = models.CharField(max_length=200, null=False)
     brand = models.CharField(max_length=200)
     lowest_price = models.PositiveIntegerField(null=True, blank=True)
