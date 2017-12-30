@@ -1,5 +1,5 @@
-export const createPostOptions = (body) => {
-  return {
+export const createPostOptions = (body, token) => {
+  const options = {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -7,4 +7,9 @@ export const createPostOptions = (body) => {
       },
       body: JSON.stringify(body),
   };
-}
+  if (token) {
+    options.headers['Authorization'] = `JWT ${token}`;
+  }
+  return options;
+};
+

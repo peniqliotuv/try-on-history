@@ -1,6 +1,6 @@
 import { createAction } from 'redux-actions';
-import config from '~/config';
 import jwtDecode from 'jwt-decode';
+import config from '../../config';
 import { createPostOptions } from '../utils/ajax';
 
 export const loginSucceeded = createAction('LOGIN_SUCCEEDED');

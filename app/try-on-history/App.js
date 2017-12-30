@@ -14,9 +14,18 @@ const preloadedState = {
     error: '',
     token: '',
   },
+  item: {
+    upc: '',
+    productName: '',
+    brand: '',
+    lowestPrice: 0.0,
+    highestPrice: 0.0,
+    imageUrls: [],
+    productDescription: '',
+    fit: 0.0,
+    numReviews: 0,
+  },
 };
-
-
 
 export const store = createStore(
   rootReducer,
@@ -54,6 +63,6 @@ const App = () => (
   <Provider store={store}>
     <RootWithState />
   </Provider>
-)
+);
 
 export default App;

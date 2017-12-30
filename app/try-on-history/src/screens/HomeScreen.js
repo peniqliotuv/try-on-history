@@ -8,6 +8,7 @@ import { Permissions } from 'expo';
 import { Container, StyledText } from '../globals/styled-components';
 import CameraComponent from '../components/CameraComponent';
 import { logout } from '../actions/AuthActions';
+import { itemLookup } from '../actions/ItemActions';
 
 class HomeScreen extends Component {
   static propTypes = {
@@ -15,7 +16,19 @@ class HomeScreen extends Component {
     error: PropTypes.string.isRequired,
     token: PropTypes.string.isRequired,
     navigation: PropTypes.object.isRequired,
+    item: PropTypes.shape({
+      upc: PropTypes.string,
+      productName: PropTypes.string,
+      brand: PropTypes.string,
+      lowestPrice: PropTypes.number,
+      highestPrice: PropTypes.number,
+      imageUrls: PropTypes.arrayOf(PropTypes.string),
+      productDescription: PropTypes.string,
+      fit: PropTypes.number,
+      numReviews: PropTypes.number,
+    }).isRequired,
     logout: PropTypes.func.isRequired,
+    itemLookup: PropTypes.func.isRequired,
   };
 
   state = {
@@ -76,7 +89,12 @@ class HomeScreen extends Component {
           backgroundColor='white'
         >
           {
-            this.state.hasCameraPermissions ? <CameraComponent />
+            this.state.hasCameraPermissions ? (
+              <CameraComponent
+                itemLookup={this.props.itemLookup}
+                token={this.props.token}
+              />
+            )
               : (<StyledText>
                 Camera View
               </StyledText>)
@@ -92,11 +110,13 @@ const mapStateToProps = (state) => {
     user: state.auth.user,
     error: state.auth.error,
     token: state.auth.token,
+    item: state.item,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
     logout: () => dispatch(logout()),
+    itemLookup: (barcode) => dispatch(itemLookup(barcode)),
   };
 };
 

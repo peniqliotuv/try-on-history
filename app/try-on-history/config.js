@@ -1,7 +1,7 @@
 const options = {
   development: {
-    hostname: 'http://localhost:8000',
-    // hostname: 'http://b4f771ed.ngrok.io',
+    // hostname: 'http://localhost:8000',
+    hostname: 'https://tryonhistory.herokuapp.com',
   },
   production: {
     hostname: '',

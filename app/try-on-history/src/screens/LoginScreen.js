@@ -49,7 +49,7 @@ class LoginScreen extends Component {
 
   async componentWillReceiveProps(nextProps) {
     // If a JWT was successfully returned from the server
-    console.log(nextProps);
+    // console.log(nextProps);
     const { routes, index } = nextProps.reduxNavigationState;
     if (nextProps.token && nextProps.token !== this.props.token) {
       try {
@@ -117,6 +117,7 @@ class LoginScreen extends Component {
         />
         <TouchableOpacity
           onPress={() => this.handleLogin(this.state.username, this.state.password)}
+          style={{ width: 150, height: 50 }}
         >
           <StyledText>SUBMIT</StyledText>
         </TouchableOpacity>

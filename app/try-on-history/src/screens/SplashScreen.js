@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { AsyncStorage, Image, View, Dimensions } from 'react-native';
+import { AsyncStorage, Image, View, Dimensions, Text, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
@@ -9,12 +9,12 @@ import {
   setAuthToken,
   clearError,
 } from '../actions/AuthActions';
-import {
-  StyledText,
-  Container,
-  StyledImage,
-  StyledButton,
-} from '../globals/styled-components';
+// import {
+//   Text,
+//   Container,
+//   Image,
+//   TouchableOpacity,
+// } from '../globals/styled-components';
 
 class SplashScreen extends Component {
   static propTypes = {
@@ -49,70 +49,82 @@ class SplashScreen extends Component {
     }
   }
 
-  imageSource = require('~/assets/photo-camera.png');
+  imageSource = require('../../assets/photo-camera.png');
   dimensions = Dimensions.get('window')
 
   render() {
     console.log('Rendering Splash Screen');
     return (
-      <Container
-        paddingTop={this.dimensions.height / 10}
-        paddingLeft={this.dimensions.width / 10}
-        paddingRight={this.dimensions.width / 10}
+      <View
+        style={{
+          paddingTop: this.dimensions.height / 10,
+          paddingLeft: this.dimensions.width / 10,
+          paddingRight: this.dimensions.width / 10,
+        }}
       >
-        <StyledText
-          fontSize='56px'
-          fontWeight='200'
-          color='white'
+        <Text
+          style={{
+            fontSize: 56,
+            fontWeight: '200',
+            color: 'white',
+          }}
         >
           TRY ON
-        </StyledText>
-        <StyledText
-          fontSize='56px'
-          color='white'
+        </Text>
+        <Text
+          style={{
+            fontSize: 56,
+            color: 'white',
+          }}
         >
           HISTORY
-        </StyledText>
+        </Text>
         <View
-          position='absolute'
-          height='100%'
-          width='100%'
+          style={{
+            flex: 1,
+            position: 'absolute',
+          }}
         >
-          <StyledImage
+          <Image
             resizeMode={Image.resizeMode.contain}
-            position='absolute'
-            top='12.5%'
-            left='-25%'
+            style={{
+              position:'absolute',
+              top:12.5,
+              left:25,
+            }}
             source={this.imageSource}
           />
         </View>
 
-        <Container
-          position='absolute'
-          flex='1'
-          flexDirection='row'
-          justifyContent='space-around'
-          width={this.dimensions.width}
-          bottom='10%'
+        <View
+          style={{
+            position: 'absolute',
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            width: this.dimensions.width,
+            bottom: 10,
+          }}
+
         >
-          <StyledButton
-            width='35%'
+          <TouchableOpacity
+            style={{width: 35}}
             onPress={() => this.props.navigation.navigate('Login')}
           >
-            <StyledText>LOGIN</StyledText>
-          </StyledButton>
-          <StyledButton
-            width='35%'
+            <Text>LOGIN</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ width: 35 }}
             onPress={() => this.props.navigation.dispatch(NavigationActions.navigate({
               routeName: 'Login',
               params: {},
               action: NavigationActions.navigate({ routeName: 'SignUp' }),
             }))}
           >
-            <StyledText>SIGN UP</StyledText>
-          </StyledButton>
-        </Container>
-      </Container>
+            <Text>SIGN UP</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     );
   }
 }
