@@ -10,6 +10,7 @@ import { Container, StyledText } from '../globals/styled-components';
 import CameraComponent from '../components/CameraComponent';
 import { logout } from '../actions/AuthActions';
 import { itemLookup } from '../actions/ItemActions';
+import { getHistory } from '../actions/HistoryActions';
 
 
 class HomeScreen extends Component {
@@ -29,13 +30,20 @@ class HomeScreen extends Component {
       numReviews: PropTypes.number,
     }).isRequired,
     itemLookupError: PropTypes.string.isRequired,
+    historyData: PropTypes.arrayOf(PropTypes.shape({
+      upc: PropTypes.string,
+      productName: PropTypes.string,
+      dateTriedOn: PropTypes.string,
+      datePurchased: PropTypes.string,
+      purchased: PropTypes.bool,
+    })).isRequired,
+    historyError: PropTypes.string.isRequired,
     logout: PropTypes.func.isRequired,
     itemLookup: PropTypes.func.isRequired,
   };
 
   state = {
     hasCameraPermissions: null,
-    shouldScanBarCode: true,
     currentIndex: 0,
   };
 
@@ -44,10 +52,10 @@ class HomeScreen extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('COmponent will receive props homescreen')
-    console.log(nextProps.itemData, this.props.itemData);
     if (!isEmpty(nextProps.itemData) && isEmpty(this.props.itemData)) {
-      Alert.alert(`Item Found: ${nextProps.itemData.productName}`);
+      Alert.alert(`Item found: ${nextProps.itemData.productName}!`);
+    } else if (nextProps.itemLookupError && !this.props.itemLookupError) {
+      Alert.alert(nextProps.itemLookupError);
     }
   }
 
@@ -76,15 +84,6 @@ class HomeScreen extends Component {
     });
   };
 
-
-  handleItemLookup = (data) => {
-    console.log('handleItemLookup entered');
-    console.log(data);
-    this.setState({ shouldScanBarCode: false }, () => {
-      this.props.itemLookup(data);
-    });
-  };
-
   render() {
     const { username, user_id } = this.props.user;
     return (
@@ -104,7 +103,20 @@ class HomeScreen extends Component {
           >
             <StyledText>LOGOUT CURRENT USER</StyledText>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.getHistory(this.props.token)}
+          >
+            <StyledText>GET HISTORY</StyledText>
+          </TouchableOpacity>
           <View>
+            {
+              this.props.historyData.map((data, i) => (
+                <View key={key}>
+                  <Text>{ data.productName }</Text>
+                  <Text>{ data.upc }</Text>
+                </View>
+              ))
+            }
           </View>
         </Container>
         <Container
@@ -133,12 +145,16 @@ const mapStateToProps = (state) => {
     token: state.auth.token,
     itemData: state.item.data,
     itemLookupError: state.item.error,
+    historyData: state.history.data,
+    historyError: state.history.error,
   };
 };
+
 const mapDispatchToProps = (dispatch) => {
   return {
     logout: () => dispatch(logout()),
     itemLookup: (barcode, token) => dispatch(itemLookup(barcode, token)),
+    getHistory: (token) => dispatch(getHistory(token)),
   };
 };
 

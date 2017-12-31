@@ -18,6 +18,10 @@ const preloadedState = {
     data: {},
     error: '',
   },
+  history: {
+    data: [],
+    error: '',
+  },
 };
 
 export const store = createStore(
