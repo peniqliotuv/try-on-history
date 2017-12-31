@@ -9,10 +9,16 @@ export const itemLookup = (barcode, token) => {
   console.log('itemLookup entered');
   return async (dispatch) => {
     try {
-      const res = await fetch(`${config.hostname}/api/items/${barcode}`, {
+      const res = await fetch(`${config.hostname}/api/items/${barcode}/`, {
         headers: { Authorization: `JWT ${token}` },
       });
+      console.group('itemlookup')
+      console.log(`JWT ${token}`);
+      console.log(res);
+      console.log(res.status);
       const json = await res.json();
+      console.log(json);
+      console.groupEnd();
       if (res.status === 200) {
         dispatch(itemLookupSucceeded(json));
       } else {

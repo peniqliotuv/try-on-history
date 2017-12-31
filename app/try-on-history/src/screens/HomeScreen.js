@@ -1,22 +1,23 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, AsyncStorage } from 'react-native';
+import { View, Text, TouchableOpacity, AsyncStorage, Keyboard, Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
 import { Permissions } from 'expo';
+import { isEmpty } from 'lodash';
 import { Container, StyledText } from '../globals/styled-components';
 import CameraComponent from '../components/CameraComponent';
 import { logout } from '../actions/AuthActions';
 import { itemLookup } from '../actions/ItemActions';
 
+
 class HomeScreen extends Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
-    error: PropTypes.string.isRequired,
     token: PropTypes.string.isRequired,
     navigation: PropTypes.object.isRequired,
-    item: PropTypes.shape({
+    itemData: PropTypes.shape({
       upc: PropTypes.string,
       productName: PropTypes.string,
       brand: PropTypes.string,
@@ -27,15 +28,28 @@ class HomeScreen extends Component {
       fit: PropTypes.number,
       numReviews: PropTypes.number,
     }).isRequired,
+    itemLookupError: PropTypes.string.isRequired,
     logout: PropTypes.func.isRequired,
     itemLookup: PropTypes.func.isRequired,
   };
 
   state = {
     hasCameraPermissions: null,
+    shouldScanBarCode: true,
     currentIndex: 0,
   };
 
+  componentWillMount() {
+    Keyboard.dismiss();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('COmponent will receive props homescreen')
+    console.log(nextProps.itemData, this.props.itemData);
+    if (!isEmpty(nextProps.itemData) && isEmpty(this.props.itemData)) {
+      Alert.alert(`Item Found: ${nextProps.itemData.productName}`);
+    }
+  }
 
   handleLogout = async () => {
     await AsyncStorage.removeItem('token');
@@ -62,6 +76,14 @@ class HomeScreen extends Component {
     });
   };
 
+
+  handleItemLookup = (data) => {
+    console.log('handleItemLookup entered');
+    console.log(data);
+    this.setState({ shouldScanBarCode: false }, () => {
+      this.props.itemLookup(data);
+    });
+  };
 
   render() {
     const { username, user_id } = this.props.user;
@@ -96,8 +118,8 @@ class HomeScreen extends Component {
               />
             )
               : (<StyledText>
-                Camera View
-              </StyledText>)
+                  Camera Permissions not granted.
+                </StyledText>)
           }
         </Container>
       </Swiper>
@@ -108,15 +130,15 @@ class HomeScreen extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.auth.user,
-    error: state.auth.error,
     token: state.auth.token,
-    item: state.item,
+    itemData: state.item.data,
+    itemLookupError: state.item.error,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
     logout: () => dispatch(logout()),
-    itemLookup: (barcode) => dispatch(itemLookup(barcode)),
+    itemLookup: (barcode, token) => dispatch(itemLookup(barcode, token)),
   };
 };
 

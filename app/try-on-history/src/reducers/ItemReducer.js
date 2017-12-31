@@ -2,18 +2,31 @@ import { handleActions } from 'redux-actions';
 import { itemLookupSucceeded, itemLookupFailed } from '../actions/ItemActions';
 
 const defaultState = {
-  upc: '',
-  productName: '',
-  brand: '',
-  lowestPrice: 0.0,
-  highestPrice: 0.0,
-  imageUrls: [],
-  productDescription: '',
-  fit: 0.0,
-  numReviews: 0,
+  data: {},
+  error: '',
 };
 
 export default handleActions({
-  [itemLookupSucceeded]: (state, action) => action.payload,
-  [itemLookupFailed]: (state, action) => defaultState,
+  [itemLookupSucceeded]: (state, action) => {
+    return  {
+      ...state,
+      data: {
+        upc: action.payload.upc,
+        productName: action.payload.product_name,
+        brand: action.payload.brand,
+        lowestPrice: action.payload.lowest_price,
+        highestPrice: action.payload.highest_price,
+        imageUrls: action.payload.image_urls,
+        productDescription: action.payload.product_description,
+        fit: action.payload.fit,
+        numReviews: action.payload.numReviews,
+      },
+    };
+  },
+  [itemLookupFailed]: (state, action) => {
+    return {
+      ...defaultState,
+      error: 'Item Lookup Failed',
+    };
+  },
 }, defaultState);

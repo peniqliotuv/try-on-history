@@ -1,34 +1,27 @@
 import React from 'react';
-import { View, Alert } from 'react-native';
-import { Camera } from 'expo';
+import PropTypes from 'prop-types';
+import { View, StyleSheet, Alert } from 'react-native';
+import { BarCodeScanner, Camera } from 'expo';
 
-const CameraComponent = ({type = Camera.Constants.Type.back, itemLookup}) => {
+const CameraComponent = ({ itemLookup, token }) => {
 
   const handleBarCodeRead = (payload) => {
-    const { data, type } = payload;
-    console.log(payload.data);
-    console.log('Barcoade was read');
-    itemLookup(data);
+    itemLookup(payload.data, token);
   };
 
   return (
     <View style={{ flex: 1 }}>
-      <Camera
-        style={{ flex: 1 }}
-        type={Camera.Constants.Type.back}
+      <BarCodeScanner
+        style={{ height: 400, width: 400 }}
         onBarCodeRead={handleBarCodeRead}
-      >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'transparent',
-            flexDirection: 'row',
-          }}>
-
-        </View>
-      </Camera>
+      />
     </View>
   );
+};
+
+CameraComponent.propTypes = {
+  itemLookup: PropTypes.func.isRequired,
+  token: PropTypes.string.isRequired,
 };
 
 export default CameraComponent;
