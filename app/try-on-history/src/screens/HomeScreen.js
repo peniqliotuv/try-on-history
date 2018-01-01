@@ -49,6 +49,7 @@ class HomeScreen extends Component {
 
   componentWillMount() {
     Keyboard.dismiss();
+    console.log('Keyboard has dismissed');
   }
 
   componentWillReceiveProps(nextProps) {
@@ -111,7 +112,7 @@ class HomeScreen extends Component {
           <View>
             {
               this.props.historyData.map((data, i) => (
-                <View key={key}>
+                <View key={i}>
                   <Text>{ data.productName }</Text>
                   <Text>{ data.upc }</Text>
                 </View>
@@ -127,6 +128,7 @@ class HomeScreen extends Component {
               <CameraComponent
                 itemLookup={this.props.itemLookup}
                 token={this.props.token}
+                upc={this.props.itemData.upc}
               />
             )
               : (<StyledText>
@@ -139,23 +141,19 @@ class HomeScreen extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.auth.user,
-    token: state.auth.token,
-    itemData: state.item.data,
-    itemLookupError: state.item.error,
-    historyData: state.history.data,
-    historyError: state.history.error,
-  };
-};
+const mapStateToProps = (state) => ({
+  user: state.auth.user,
+  token: state.auth.token,
+  itemData: state.item.data,
+  itemLookupError: state.item.error,
+  historyData: state.history.data,
+  historyError: state.history.error,
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    logout: () => dispatch(logout()),
-    itemLookup: (barcode, token) => dispatch(itemLookup(barcode, token)),
-    getHistory: (token) => dispatch(getHistory(token)),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  logout: () => dispatch(logout()),
+  itemLookup: (barcode, token) => dispatch(itemLookup(barcode, token)),
+  getHistory: (token) => dispatch(getHistory(token)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
