@@ -7,23 +7,18 @@ import {
   ActivityIndicator,
   AsyncStorage,
   Alert,
+  Text,
+  TextInput,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/native';
-import { StyledText, Container } from '../globals/styled-components';
+import { StyledText, Container } from '../../globals/styled-components';
 import {
   login,
   clearError,
-} from '../actions/AuthActions';
-import colors from '../globals/colors';
-
-const InputField = styled.TextInput`
-  border: 1px solid ${colors.white};
-  margin: 20px;
-  height: 40px;
-  font-size: 20px;
-`;
-
+} from '../../actions/AuthActions';
+import styles from './styles';
+import colors from '../../globals/colors';
 
 class LoginScreen extends Component {
   static propTypes = {
@@ -95,26 +90,31 @@ class LoginScreen extends Component {
       );
     }
     return (
-      <View>
-        <StyledText>Not Logged In!</StyledText>
-        <InputField
-          autoFocus
-          placeholder='Username'
-          autocorrect={false}
-          autoCapitalize='none'
-          placeholderTextColor='black'
-          onChangeText={(text) => this.setState({ username: text })}
-          onSubmitEditing={() => this.passwordRef.focus()}
-        />
-        <InputField
-          placeholder='Password'
-          autocorrect={false}
-          autoCapitalize='none'
-          placeholderTextColor='black'
-          onChangeText={(text) => this.setState({ password: text })}
-          secureTextEntry
-          ref={(input) => this.passwordRef = input}
-        />
+      <View style={styles.container}>
+        <Text style={styles.titleLight}>TRY ON</Text>
+        <Text style={styles.title}>HISTORY</Text>
+        <View>
+          <TextInput
+            style={styles.inputField}
+            autoFocus
+            placeholder='Username'
+            autocorrect={false}
+            autoCapitalize='none'
+            placeholderTextColor='black'
+            onChangeText={(text) => this.setState({ username: text })}
+            onSubmitEditing={() => this.passwordRef.focus()}
+          />
+          <TextInput
+            style={styles.inputField}
+            placeholder='Password'
+            autocorrect={false}
+            autoCapitalize='none'
+            placeholderTextColor='black'
+            onChangeText={(text) => this.setState({ password: text })}
+            secureTextEntry
+            ref={(input) => this.passwordRef = input}
+          />
+        </View>
         <TouchableOpacity
           onPress={() => this.handleLogin(this.state.username, this.state.password)}
           style={{ width: 150, height: 50 }}

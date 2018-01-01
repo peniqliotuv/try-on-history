@@ -1,20 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { AsyncStorage, Image, View, Dimensions, Text, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
+import styles from './styles';
+import {
+  AsyncStorage,
+  Image,
+  View,
+  Dimensions,
+  Text,
+  TouchableOpacity,
+  StyleSheet
+} from 'react-native';
 import {
   loginWithAuthToken,
   setAuthToken,
   clearError,
-} from '../actions/AuthActions';
-// import {
-//   Text,
-//   Container,
-//   Image,
-//   TouchableOpacity,
-// } from '../globals/styled-components';
+} from '../../actions/AuthActions';
 
 class SplashScreen extends Component {
   static propTypes = {
@@ -49,79 +52,42 @@ class SplashScreen extends Component {
     }
   }
 
-  imageSource = require('../../assets/photo-camera.png');
+  imageSource = require('../../../assets/photo-camera.png');
   dimensions = Dimensions.get('window')
 
   render() {
-    console.log('Rendering Splash Screen');
+
+    const buttonContainerStyles = StyleSheet.flatten([styles.buttonContainer, { width: this.dimensions.width }]);
+
     return (
       <View
-        style={{
-          paddingTop: this.dimensions.height / 10,
-          paddingLeft: this.dimensions.width / 10,
-          paddingRight: this.dimensions.width / 10,
-        }}
+        style={styles.container}
       >
-        <Text
-          style={{
-            fontSize: 56,
-            fontWeight: '200',
-            color: 'white',
-          }}
-        >
-          TRY ON
-        </Text>
-        <Text
-          style={{
-            fontSize: 56,
-            color: 'white',
-          }}
-        >
-          HISTORY
-        </Text>
-        <View
-          style={{
-            flex: 1,
-            position: 'absolute',
-          }}
-        >
+        <Text style={styles.titleLight}>TRY ON</Text>
+        <Text style={styles.title}>HISTORY</Text>
+        <View style={styles.imageContainer}>
           <Image
             resizeMode={Image.resizeMode.contain}
-            style={{
-              position:'absolute',
-              top:12.5,
-              left:25,
-            }}
+            style={styles.image}
             source={this.imageSource}
           />
         </View>
-
-        <View
-          style={{
-            position: 'absolute',
-            flex: 1,
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            width: this.dimensions.width,
-            bottom: 10,
-          }}
-
-        >
+        <View style={buttonContainerStyles}>
           <TouchableOpacity
-            style={{width: 35}}
+            style={styles.button}
             onPress={() => this.props.navigation.navigate('Login')}
           >
-            <Text>LOGIN</Text>
+            <Text style={styles.buttonText}>LOGIN</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ width: 35 }}
+            style={styles.button}
             onPress={() => this.props.navigation.dispatch(NavigationActions.navigate({
               routeName: 'Login',
               params: {},
               action: NavigationActions.navigate({ routeName: 'SignUp' }),
             }))}
           >
-            <Text>SIGN UP</Text>
+            <Text style={styles.buttonText}>SIGN UP</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -129,19 +95,16 @@ class SplashScreen extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    user: state.auth.user,
-    error: state.auth.error,
-  };
-};
+const mapStateToProps = (state) => ({
+  user: state.auth.user,
+  error: state.auth.error,
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    loginWithAuthToken: (token) => dispatch(loginWithAuthToken(token)),
-    setAuthToken: (token) => dispatch(setAuthToken(token)),
-    clearError: () => dispatch(clearError()),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  loginWithAuthToken: (token) => dispatch(loginWithAuthToken(token)),
+  setAuthToken: (token) => dispatch(setAuthToken(token)),
+  clearError: () => dispatch(clearError()),
+});
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(SplashScreen);
