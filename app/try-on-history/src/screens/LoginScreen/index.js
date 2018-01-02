@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/native';
-import { StyledText, Container } from '../../globals/styled-components';
+import { Container } from '../../globals/styled-components';
 import {
   login,
   clearError,
@@ -91,13 +91,15 @@ class LoginScreen extends Component {
     }
     return (
       <View style={styles.container}>
-        <Text style={styles.titleLight}>TRY ON</Text>
-        <Text style={styles.title}>HISTORY</Text>
-        <View>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleLight}>TRY ON</Text>
+          <Text style={styles.title}>HISTORY</Text>
+        </View>
+        <View style={styles.textInputContainer}>
           <TextInput
             style={styles.inputField}
             autoFocus
-            placeholder='Username'
+            placeholder='USERNAME'
             autocorrect={false}
             autoCapitalize='none'
             placeholderTextColor='black'
@@ -106,7 +108,7 @@ class LoginScreen extends Component {
           />
           <TextInput
             style={styles.inputField}
-            placeholder='Password'
+            placeholder='PASSWORD'
             autocorrect={false}
             autoCapitalize='none'
             placeholderTextColor='black'
@@ -115,17 +117,20 @@ class LoginScreen extends Component {
             ref={(input) => this.passwordRef = input}
           />
         </View>
-        <TouchableOpacity
-          onPress={() => this.handleLogin(this.state.username, this.state.password)}
-          style={{ width: 150, height: 50 }}
-        >
-          <StyledText>SUBMIT</StyledText>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={this.handleNavigateToSignUp}
-        >
-          <StyledText>SIGN UP</StyledText>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            onPress={() => this.handleLogin(this.state.username, this.state.password)}
+            style={styles.button}
+          >
+            <Text>SUBMIT</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={this.handleNavigateToSignUp}
+            style={styles.paddinglessButton}
+          >
+            <Text>DON'T HAVE AN ACCOUNT? SIGN UP!</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }

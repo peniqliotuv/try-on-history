@@ -5,11 +5,16 @@ export default StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
     alignItems: 'center',
     paddingLeft: 30,
     paddingRight: 30,
-    paddingTop: 45,
+    paddingTop: 70,
+    paddingBottom: 70,
+  },
+  titleContainer: {
+    flex: 1,
   },
   titleLight: {
     fontSize: 48,
@@ -22,8 +27,30 @@ export default StyleSheet.create({
     color: colors.darkGrey,
   },
   inputField: {
-    margin: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 20,
     height: 40,
     fontSize: 20,
+  },
+  textInputContainer: {
+    backgroundColor: 'orange',
+    flex: 1,
+  },
+  buttonContainer: {
+    backgroundColor: 'red',
+    alignSelf: 'stretch',
+    flex: 1,
+    height: 100,
+  },
+  button: {
+    height: 40,
+    margin: 20,
+    color: colors.white,
+    backgroundColor: colors.cobaltBlue,
+    borderRadius: 5,
+  },
+  paddinglessButton: {
+
   },
 });

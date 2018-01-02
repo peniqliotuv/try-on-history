@@ -56,13 +56,10 @@ class SplashScreen extends Component {
   dimensions = Dimensions.get('window')
 
   render() {
-
     const buttonContainerStyles = StyleSheet.flatten([styles.buttonContainer, { width: this.dimensions.width }]);
 
     return (
-      <View
-        style={styles.container}
-      >
+      <View style={styles.container}>
         <Text style={styles.titleLight}>TRY ON</Text>
         <Text style={styles.title}>HISTORY</Text>
         <View style={styles.imageContainer}>
