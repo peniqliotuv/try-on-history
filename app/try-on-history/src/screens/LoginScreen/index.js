@@ -9,9 +9,11 @@ import {
   Alert,
   Text,
   TextInput,
+  Platform,
+  BackHandler,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import styled from 'styled-components/native';
+import { NavigationActions } from 'react-navigation';
 import { Container } from '../../globals/styled-components';
 import {
   login,
@@ -27,6 +29,7 @@ class LoginScreen extends Component {
     token: PropTypes.string.isRequired,
     navigation: PropTypes.shape({
       navigate: PropTypes.func.isRequired,
+      dispatch: PropTypes.func.isRequired,
     }),
     reduxNavigationState: PropTypes.shape({
       index: PropTypes.number,
@@ -41,6 +44,15 @@ class LoginScreen extends Component {
     password: '',
     isLoading: false,
   };
+
+  componentWillMount() {
+    if (Platform.OS === 'android') {
+      BackHandler.addEventListener('hardwareBackPress', () => {
+        this.props.navigation.dispatch(NavigationActions.back());
+        return true;
+      });
+    }
+  }
 
   async componentWillReceiveProps(nextProps) {
     // If a JWT was successfully returned from the server
@@ -72,6 +84,12 @@ class LoginScreen extends Component {
     }
   }
 
+  componentWillUnmount() {
+    if (Platform.OS === 'android') {
+      BackHandler.removeEventListener('hardwareBackPress');
+    }
+  }
+
   handleLogin = (email, password) => {
     this.setState({ isLoading: true }, () => {
       this.props.login(email, password);
@@ -81,7 +99,7 @@ class LoginScreen extends Component {
   handleNavigateToSignUp = () => {
     this.props.navigation.navigate('SignUp');
     this.props.clearError();
-  }
+  };
 
   renderContentBody = () => {
     if (this.state.isLoading && isEmpty(this.props.user)) {
@@ -97,21 +115,25 @@ class LoginScreen extends Component {
         </View>
         <View style={styles.textInputContainer}>
           <TextInput
-            style={styles.inputField}
             autoFocus
+            style={styles.inputField}
+            underlineColorAndroid={colors.cobaltBlue}
             placeholder='USERNAME'
             autocorrect={false}
             autoCapitalize='none'
-            placeholderTextColor='black'
+            placeholderTextColor={colors.darkGrey}
+            selectionColor={colors.cobaltBlue}
             onChangeText={(text) => this.setState({ username: text })}
             onSubmitEditing={() => this.passwordRef.focus()}
           />
           <TextInput
             style={styles.inputField}
+            underlineColorAndroid={colors.cobaltBlue}
             placeholder='PASSWORD'
             autocorrect={false}
             autoCapitalize='none'
-            placeholderTextColor='black'
+            placeholderTextColor={colors.darkGrey}
+            selectionColor={colors.cobaltBlue}
             onChangeText={(text) => this.setState({ password: text })}
             secureTextEntry
             ref={(input) => this.passwordRef = input}
@@ -119,16 +141,19 @@ class LoginScreen extends Component {
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
+            activeOpacity={0.65}
             onPress={() => this.handleLogin(this.state.username, this.state.password)}
             style={styles.button}
           >
-            <Text>SUBMIT</Text>
+            <Text style={styles.buttonText}>LOGIN</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.handleNavigateToSignUp}
             style={styles.paddinglessButton}
           >
-            <Text>DON'T HAVE AN ACCOUNT? SIGN UP!</Text>
+            <Text style={styles.paddinglessButtonText}>
+              FORGOT MY PASSWORD
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

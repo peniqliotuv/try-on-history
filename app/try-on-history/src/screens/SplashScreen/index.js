@@ -11,7 +11,7 @@ import {
   Dimensions,
   Text,
   TouchableOpacity,
-  StyleSheet
+  StyleSheet,
 } from 'react-native';
 import {
   loginWithAuthToken,
