@@ -47,7 +47,6 @@ class LoginScreen extends Component {
 
   componentWillMount() {
     if (Platform.OS === 'android') {
-      const { reduxNavigationState, navigation } = this.props;
       BackHandler.addEventListener('hardwareBackPress', () => {
         // if (reduxNavigationState.index === 1) {
           navigation.dispatch(NavigationActions.back());
@@ -124,7 +123,7 @@ class LoginScreen extends Component {
             placeholder='USERNAME'
             autocorrect={false}
             autoCapitalize='none'
-            placeholderTextColor={colors.darkGrey}
+            placeholderTextColor={colors.lightGrey}
             selectionColor={colors.cobaltBlue}
             onChangeText={(text) => this.setState({ username: text })}
             onSubmitEditing={() => this.passwordRef.focus()}
@@ -135,7 +134,7 @@ class LoginScreen extends Component {
             placeholder='PASSWORD'
             autocorrect={false}
             autoCapitalize='none'
-            placeholderTextColor={colors.darkGrey}
+            placeholderTextColor={colors.lightGrey}
             selectionColor={colors.cobaltBlue}
             onChangeText={(text) => this.setState({ password: text })}
             secureTextEntry

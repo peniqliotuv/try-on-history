@@ -112,7 +112,7 @@ class SignUpScreen extends Component {
             placeholder='USERNAME'
             autocorrect={false}
             autoCapitalize='none'
-            placeholderTextColor={colors.darkGrey}
+            placeholderTextColor={colors.lightGrey}
             selectionColor={colors.cobaltBlue}
             onChangeText={(text) => this.setState({ username: text })}
             onSubmitEditing={() => this.passwordRef.focus()}
@@ -123,7 +123,7 @@ class SignUpScreen extends Component {
             placeholder='PASSWORD'
             autocorrect={false}
             autoCapitalize='none'
-            placeholderTextColor={colors.darkGrey}
+            placeholderTextColor={colors.lightGrey}
             selectionColor={colors.cobaltBlue}
             onChangeText={(text) => this.setState({ password: text })}
             onSubmitEditing={() => this.emailRef.focus()}
@@ -137,7 +137,7 @@ class SignUpScreen extends Component {
             autocorrect={false}
             keyboardType='email-address'
             autoCapitalize='none'
-            placeholderTextColor={colors.darkGrey}
+            placeholderTextColor={colors.lightGrey}
             selectionColor={colors.cobaltBlue}
             onChangeText={(text) => this.setState({ email: text })}
             ref={(input) => this.emailRef = input}

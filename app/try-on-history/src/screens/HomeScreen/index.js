@@ -15,11 +15,11 @@ import { connect } from 'react-redux';
 import Swiper from 'react-native-swiper';
 import { Permissions } from 'expo';
 import { isEmpty } from 'lodash';
-import { Container, StyledText } from '../globals/styled-components';
-import CameraComponent from '../components/CameraComponent';
-import { logout } from '../actions/AuthActions';
-import { itemLookup } from '../actions/ItemActions';
-import { getHistory } from '../actions/HistoryActions';
+import { logout } from '../../actions/AuthActions';
+import { itemLookup } from '../../actions/ItemActions';
+import { getHistory } from '../../actions/HistoryActions';
+import CameraComponent from '../../components/CameraComponent';
+import styles from './styles';
 
 
 class HomeScreen extends Component {
@@ -53,6 +53,7 @@ class HomeScreen extends Component {
     historyError: PropTypes.string.isRequired,
     logout: PropTypes.func.isRequired,
     itemLookup: PropTypes.func.isRequired,
+    getHistory: PropTypes.func.isRequired,
   };
 
   state = {
@@ -116,34 +117,36 @@ class HomeScreen extends Component {
         index={0}
         onMomentumScrollEnd={this.handleScroll}
       >
-        <Container>
-          <StyledText fontSize='24px'>Success! {this.props.token}</StyledText>
-          <StyledText>Username: {username}</StyledText>
-          <StyledText>User ID: {user_id}</StyledText>
-          <TouchableOpacity
-            onPress={this.handleLogout}
-          >
-            <StyledText>LOGOUT CURRENT USER</StyledText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.getHistory(this.props.token)}
-          >
-            <StyledText>GET HISTORY</StyledText>
-          </TouchableOpacity>
-          <View>
-            {
-              this.props.historyData.map((data, i) => (
-                <View key={i}>
-                  <Text>{ data.productName }</Text>
-                  <Text>{ data.upc }</Text>
-                </View>
-              ))
-            }
+        <View style={styles.container}>
+          <View style={styles.userContainer}>
+            <Text fontSize='24px'>Success! {this.props.token}</Text>
+              <Text>Username: {username}</Text>
+              <Text>User ID: {user_id}</Text>
+              <TouchableOpacity
+                onPress={this.handleLogout}
+              >
+                <Text>LOGOUT CURRENT USER</Text>
+              </TouchableOpacity>
           </View>
-        </Container>
-        <Container
-          backgroundColor='white'
-        >
+          <View style={styles.historyContainer}>
+            <TouchableOpacity
+              onPress={() => this.props.getHistory(this.props.token)}
+            >
+              <Text>GET HISTORY</Text>
+            </TouchableOpacity>
+            <View>
+              {
+                this.props.historyData.map((data, i) => (
+                  <View key={i}>
+                    <Text>{ data.productName }</Text>
+                    <Text>{ data.upc }</Text>
+                  </View>
+                ))
+              }
+            </View>
+          </View>
+        </View>
+        <View style={styles.container}>
           {
             this.state.hasCameraPermissions ? (
               <CameraComponent
@@ -152,11 +155,11 @@ class HomeScreen extends Component {
                 upc={this.props.itemData.upc}
               />
             )
-              : (<StyledText>
+              : (<Text>
                   Camera Permissions not granted.
-                </StyledText>)
+                </Text>)
           }
-        </Container>
+        </View>
       </Swiper>
     );
   }
