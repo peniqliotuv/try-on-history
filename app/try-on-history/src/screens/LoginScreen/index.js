@@ -48,9 +48,7 @@ class LoginScreen extends Component {
   componentWillMount() {
     if (Platform.OS === 'android') {
       BackHandler.addEventListener('hardwareBackPress', () => {
-        // if (reduxNavigationState.index === 1) {
-          navigation.dispatch(NavigationActions.back());
-        // }
+        this.props.navigation.dispatch(NavigationActions.back());
         return true;
       });
     }
@@ -106,7 +104,9 @@ class LoginScreen extends Component {
   renderContentBody = () => {
     if (this.state.isLoading && isEmpty(this.props.user)) {
       return (
-        <ActivityIndicator size='large' color='#0000ff' />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size='large' color='#0000ff' />
+        </View>
       );
     }
     return (

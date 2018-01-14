@@ -19,6 +19,7 @@ import { logout } from '../../actions/AuthActions';
 import { itemLookup } from '../../actions/ItemActions';
 import { getHistory } from '../../actions/HistoryActions';
 import CameraComponent from '../../components/CameraComponent';
+import ScrollComponent from '../../components/ScrollComponent';
 import styles from './styles';
 
 
@@ -67,6 +68,7 @@ class HomeScreen extends Component {
     if (Platform.OS === 'android') {
       BackHandler.addEventListener('hardwareBackPress', () => true);
     }
+    this.props.getHistory(this.props.token);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -98,8 +100,7 @@ class HomeScreen extends Component {
     let { hasCameraPermissions } = this.state;
     if (state.index === 1) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA);
-      console.log(status);
-      hasCameraPermissions = status === 'granted';
+      hasCameraPermissions = (status === 'granted');
     }
     this.setState({
       currentIndex: state.index,
@@ -108,7 +109,6 @@ class HomeScreen extends Component {
   };
 
   render() {
-    const { username, user_id } = this.props.user;
     return (
       <Swiper
         loop={false}
@@ -117,35 +117,11 @@ class HomeScreen extends Component {
         index={0}
         onMomentumScrollEnd={this.handleScroll}
       >
-        <View style={styles.container}>
-          <View style={styles.userContainer}>
-            <Text fontSize='24px'>Success! {this.props.token}</Text>
-              <Text>Username: {username}</Text>
-              <Text>User ID: {user_id}</Text>
-              <TouchableOpacity
-                onPress={this.handleLogout}
-              >
-                <Text>LOGOUT CURRENT USER</Text>
-              </TouchableOpacity>
-          </View>
-          <View style={styles.historyContainer}>
-            <TouchableOpacity
-              onPress={() => this.props.getHistory(this.props.token)}
-            >
-              <Text>GET HISTORY</Text>
-            </TouchableOpacity>
-            <View>
-              {
-                this.props.historyData.map((data, i) => (
-                  <View key={i}>
-                    <Text>{ data.productName }</Text>
-                    <Text>{ data.upc }</Text>
-                  </View>
-                ))
-              }
-            </View>
-          </View>
-        </View>
+        <ScrollComponent
+          user={this.props.user}
+          handleLogout={this.handleLogout}
+          historyData={this.props.historyData}
+        />
         <View style={styles.container}>
           {
             this.state.hasCameraPermissions ? (

@@ -13,6 +13,11 @@ export default StyleSheet.create({
     paddingTop: 70,
     paddingBottom: 70,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+  },
   titleContainer: {
     flex: 1,
     justifyContent: 'center',
