@@ -1,5 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, AsyncStorage, Keyboard, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  AsyncStorage,
+  Keyboard,
+  Alert,
+  Platform,
+  BackHandler,
+} from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -18,6 +27,10 @@ class HomeScreen extends Component {
     user: PropTypes.object.isRequired,
     token: PropTypes.string.isRequired,
     navigation: PropTypes.object.isRequired,
+    reduxNavigationState: PropTypes.shape({
+      index: PropTypes.number,
+      routes: PropTypes.array,
+    }).isRequired,
     itemData: PropTypes.shape({
       upc: PropTypes.string,
       productName: PropTypes.string,
@@ -49,7 +62,10 @@ class HomeScreen extends Component {
 
   componentWillMount() {
     Keyboard.dismiss();
-    console.log('Keyboard has dismissed');
+    // Remove the other screens
+    if (Platform.OS === 'android') {
+      BackHandler.addEventListener('hardwareBackPress', () => true);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -57,6 +73,12 @@ class HomeScreen extends Component {
       Alert.alert(`Item found: ${nextProps.itemData.productName}!`);
     } else if (nextProps.itemLookupError && !this.props.itemLookupError) {
       Alert.alert(nextProps.itemLookupError);
+    }
+  }
+
+  componentWillUnmount() {
+    if (Platform.OS === 'android') {
+      BackHandler.removeEventListener('hardwareBackPress');
     }
   }
 
@@ -69,7 +91,6 @@ class HomeScreen extends Component {
         NavigationActions.navigate({ routeName: 'Splash' }),
       ],
     }));
-    // this.props.navigation.navigate('Splash');
   };
 
   handleScroll = async (e, state, context) => {
@@ -148,6 +169,7 @@ const mapStateToProps = (state) => ({
   itemLookupError: state.item.error,
   historyData: state.history.data,
   historyError: state.history.error,
+  reduxNavigationState: state.navigation,
 });
 
 const mapDispatchToProps = (dispatch) => ({

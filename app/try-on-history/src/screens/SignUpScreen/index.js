@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
 import {
   View,
   TouchableOpacity,
@@ -12,46 +11,38 @@ import {
   Platform,
   BackHandler,
 } from 'react-native';
-import PropTypes from 'prop-types';
 import { NavigationActions } from 'react-navigation';
-import { Container } from '../../globals/styled-components';
-import {
-  login,
-  clearError,
-} from '../../actions/AuthActions';
+import { connect } from 'react-redux';
+import { isEmpty } from 'lodash';
+import { signUp, clearError } from '../../actions/AuthActions';
 import styles from './styles';
 import colors from '../../globals/colors';
 
-class LoginScreen extends Component {
+class SignUpScreen extends Component {
   static propTypes = {
-    user: PropTypes.object.isRequired,
+    signUp: PropTypes.func.isRequired,
+    clearError: PropTypes.func.isRequired,
     error: PropTypes.string.isRequired,
+    user: PropTypes.object.isRequired,
+    navigation: PropTypes.object.isRequired,
     token: PropTypes.string.isRequired,
-    navigation: PropTypes.shape({
-      navigate: PropTypes.func.isRequired,
-      dispatch: PropTypes.func.isRequired,
-    }),
     reduxNavigationState: PropTypes.shape({
       index: PropTypes.number,
       routes: PropTypes.array,
     }).isRequired,
-    login: PropTypes.func.isRequired,
-    clearError: PropTypes.func.isRequired,
   };
 
   state = {
     username: '',
     password: '',
+    email: '',
     isLoading: false,
   };
 
   componentWillMount() {
     if (Platform.OS === 'android') {
-      const { reduxNavigationState, navigation } = this.props;
       BackHandler.addEventListener('hardwareBackPress', () => {
-        // if (reduxNavigationState.index === 1) {
-          navigation.dispatch(NavigationActions.back());
-        // }
+        this.props.navigation.dispatch(NavigationActions.back());
         return true;
       });
     }
@@ -59,7 +50,6 @@ class LoginScreen extends Component {
 
   async componentWillReceiveProps(nextProps) {
     // If a JWT was successfully returned from the server
-    // console.log(nextProps);
     const { routes, index } = nextProps.reduxNavigationState;
     if (nextProps.token && nextProps.token !== this.props.token) {
       try {
@@ -68,21 +58,11 @@ class LoginScreen extends Component {
       } catch (e) {
         console.error('Error Saving the token');
       }
-    } else if (nextProps.error && routes[index].routeName === 'Login') {
+    } else if (nextProps.error && routes[index].routeName === 'SignUp') {
       Alert.alert(
-        'Invalid Login',
+        'Invalid Signup',
         nextProps.error,
       );
-      this.setState({ isLoading: false });
-    }
-
-    if (!isEmpty(nextProps.user)) {
-      // this.props.navigation.navigate('Home');
-      // this.props.navigation.dispatch(NavigationActions.navigate({
-      //         routeName: 'Home',
-      //         params: {},
-      //         // action: NavigationActions.navigate({ routeName: 'SignUp' }),
-      //       }));
       this.setState({ isLoading: false });
     }
   }
@@ -93,23 +73,31 @@ class LoginScreen extends Component {
     }
   }
 
-  handleLogin = (email, password) => {
-    this.setState({ isLoading: true }, () => {
-      this.props.login(email, password);
-    });
+  handleSignUp = (username, password) => {
+    this.props.signUp(username, password);
   };
 
-  handleNavigateToSignUp = () => {
-    this.props.navigation.navigate('SignUp');
+  handleNavigateToLogin = () => {
     this.props.clearError();
+    this.props.navigation.dispatch(NavigationActions.back());
   };
 
-  renderContentBody = () => {
+  render() {
     if (this.state.isLoading && isEmpty(this.props.user)) {
       return (
-        <ActivityIndicator size='large' color='#0000ff' />
+        <View>
+          <Text>Signing Up...</Text>
+          <ActivityIndicator size='large' color='#0000ff' />
+        </View>
+      );
+    } else if (!isEmpty(this.props.user)) {
+      return (
+        <View>
+          <Text>SUCCESSFUL SIGNUP!</Text>
+        </View>
       );
     }
+
     return (
       <View style={styles.container}>
         <View style={styles.titleContainer}>
@@ -138,17 +126,30 @@ class LoginScreen extends Component {
             placeholderTextColor={colors.darkGrey}
             selectionColor={colors.cobaltBlue}
             onChangeText={(text) => this.setState({ password: text })}
+            onSubmitEditing={() => this.emailRef.focus()}
             secureTextEntry
             ref={(input) => this.passwordRef = input}
+          />
+          <TextInput
+            style={styles.inputField}
+            underlineColorAndroid={colors.cobaltBlue}
+            placeholder='EMAIL'
+            autocorrect={false}
+            keyboardType='email-address'
+            autoCapitalize='none'
+            placeholderTextColor={colors.darkGrey}
+            selectionColor={colors.cobaltBlue}
+            onChangeText={(text) => this.setState({ email: text })}
+            ref={(input) => this.emailRef = input}
           />
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             activeOpacity={0.65}
-            onPress={() => this.handleLogin(this.state.username, this.state.password)}
+            onPress={() => this.handleSignUp(this.state.username, this.state.password)}
             style={styles.button}
           >
-            <Text style={styles.buttonText}>LOGIN</Text>
+            <Text style={styles.buttonText}>SIGN UP</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.handleNavigateToSignUp}
@@ -162,22 +163,13 @@ class LoginScreen extends Component {
       </View>
     );
   }
-
-  render() {
-    return (
-      <Container>
-        { this.renderContentBody() }
-      </Container>
-    );
-  }
 }
 
 const mapStateToProps = (state) => {
-  // Extract the current navigation state from the redux store
   const { routes, index } = state.navigation;
   return {
-    user: state.auth.user,
     error: state.auth.error,
+    user: state.auth.user,
     token: state.auth.token,
     reduxNavigationState: routes[index],
   };
@@ -185,16 +177,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    login: (username, password) => dispatch(login(username, password)),
+    signUp: (username, password) => dispatch(signUp(username, password)),
     clearError: () => dispatch(clearError()),
   };
 };
 
-// The "pure" parameter allows us to prevent being stuck in an infinitely loading state
-// if the user provides incorrect credentials twice.
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  null,
-  { pure: false },
-)(LoginScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpScreen);
