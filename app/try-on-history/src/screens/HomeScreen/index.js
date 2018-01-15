@@ -8,6 +8,7 @@ import {
   Alert,
   Platform,
   BackHandler,
+  Modal,
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import PropTypes from 'prop-types';
@@ -20,6 +21,7 @@ import { itemLookup } from '../../actions/ItemActions';
 import { getHistory } from '../../actions/HistoryActions';
 import CameraComponent from '../../components/CameraComponent';
 import ScrollComponent from '../../components/ScrollComponent';
+import ModalPopup from '../../components/ModalPopup';
 import styles from './styles';
 
 
@@ -60,6 +62,7 @@ class HomeScreen extends Component {
   state = {
     hasCameraPermissions: null,
     currentIndex: 0,
+    isModalVisible: false,
   };
 
   componentWillMount() {
@@ -84,6 +87,8 @@ class HomeScreen extends Component {
       BackHandler.removeEventListener('hardwareBackPress');
     }
   }
+
+  toggleModalVisibility = () => this.setState({ isModalVisible: !this.state.isModalVisible });
 
   handleLogout = async () => {
     await AsyncStorage.removeItem('token');
@@ -117,11 +122,27 @@ class HomeScreen extends Component {
         index={0}
         onMomentumScrollEnd={this.handleScroll}
       >
-        <ScrollComponent
-          user={this.props.user}
-          handleLogout={this.handleLogout}
-          historyData={this.props.historyData}
-        />
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
+          <ScrollComponent
+            user={this.props.user}
+            handleLogout={this.handleLogout}
+            historyData={this.props.historyData}
+            toggleModalVisibility={this.toggleModalVisibility}
+          />
+          <Modal
+            visible={this.state.isModalVisible}
+            animationType='slide'
+            onRequestClose={this.toggleModalVisibility}
+            onDismiss={this.toggleModalVisibility}
+            transparent
+          >
+            <ModalPopup productName='asdf' />
+          </Modal>
+        </View>
         <View style={styles.container}>
           {
             this.state.hasCameraPermissions ? (

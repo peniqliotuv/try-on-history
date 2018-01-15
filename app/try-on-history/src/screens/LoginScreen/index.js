@@ -11,6 +11,7 @@ import {
   TextInput,
   Platform,
   BackHandler,
+  Keyboard,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { NavigationActions } from 'react-navigation';
@@ -93,6 +94,7 @@ class LoginScreen extends Component {
   handleLogin = (email, password) => {
     this.setState({ isLoading: true }, () => {
       this.props.login(email, password);
+      Keyboard.dismiss();
     });
   };
 

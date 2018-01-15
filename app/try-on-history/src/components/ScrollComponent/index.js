@@ -5,19 +5,27 @@ import ListItem from '../ListItem';
 import colors from '../../globals/colors';
 import styles from './styles';
 
-const ScrollComponent = ({ user, historyData, handleLogout }) => {
+const ScrollComponent = ({ user, historyData, handleLogout, toggleModalVisibility }) => {
   return (
       <View style={styles.container}>
         <View
           style={styles.userContainer}
         >
           <Text>{user.username}</Text>
+          <TouchableOpacity onPress={handleLogout}>
+            <Text> LOGOUT </Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.historyContainer}>
           <FlatList
             style={styles.flatList}
             data={historyData}
-            renderItem={({item}) => <ListItem history={item} />}
+            renderItem={({ item }) => (
+              <ListItem
+                history={item}
+                toggleModalVisibility={toggleModalVisibility}
+              />
+            )}
             keyExtractor={item => item.upc}
             listEmptyComponent={() => (
               new Array(10).map(i => <ListItem />)
@@ -39,6 +47,7 @@ ScrollComponent.propTypes = {
     purchased: PropTypes.bool,
   })).isRequired,
   handleLogout: PropTypes.func.isRequired,
+  toggleModalVisibility: PropTypes.func.isRequired,
 };
 
 export default ScrollComponent;
