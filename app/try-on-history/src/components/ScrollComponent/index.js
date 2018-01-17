@@ -5,7 +5,7 @@ import ListItem from '../ListItem';
 import colors from '../../globals/colors';
 import styles from './styles';
 
-const ScrollComponent = ({ user, historyData, handleLogout, toggleModalVisibility }) => {
+const ScrollComponent = ({ user, historyData, handleLogout, toggleModalVisibility, handleItemLookup }) => {
   return (
       <View style={styles.container}>
         <View
@@ -23,6 +23,7 @@ const ScrollComponent = ({ user, historyData, handleLogout, toggleModalVisibilit
             renderItem={({ item }) => (
               <ListItem
                 history={item}
+                handleItemLookup={handleItemLookup}
                 toggleModalVisibility={toggleModalVisibility}
               />
             )}
@@ -30,8 +31,7 @@ const ScrollComponent = ({ user, historyData, handleLogout, toggleModalVisibilit
             listEmptyComponent={() => (
               new Array(10).map(i => <ListItem />)
             )}
-          >
-          </FlatList>
+          />
         </View>
       </View>
   );
@@ -47,6 +47,7 @@ ScrollComponent.propTypes = {
     purchased: PropTypes.bool,
   })).isRequired,
   handleLogout: PropTypes.func.isRequired,
+  handleItemLookup: PropTypes.func.isRequired,
   toggleModalVisibility: PropTypes.func.isRequired,
 };
 

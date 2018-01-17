@@ -6,7 +6,7 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    backgroundColor: colors.white,
+    backgroundColor: colors.darkWhite,
     marginLeft: 40,
     marginRight: 40,
     marginTop: 20,
@@ -24,3 +24,4 @@ export default StyleSheet.create({
     color: colors.lightGrey,
   },
 });
+

@@ -6,11 +6,8 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    backgroundColor: colors.lightGrey,
-    marginLeft: 40,
-    marginRight: 40,
-    marginTop: 90,
-    marginBottom: 90,
+    backgroundColor: colors.darkWhite,
+    margin: 10,
     paddingTop: 10,
     paddingBottom: 10,
     paddingLeft: 20,
@@ -25,3 +22,4 @@ export default StyleSheet.create({
     color: colors.lightGrey,
   },
 });
+

@@ -9,12 +9,12 @@ export default StyleSheet.create({
     backgroundColor: 'orange',
   },
   userContainer: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.cobaltBlue,
     flex: 2,
     alignSelf: 'stretch',
   },
   historyContainer: {
-    backgroundColor: colors.cobaltBlue,
+    backgroundColor: colors.white,
     flex: 5,
     alignSelf: 'stretch',
   },

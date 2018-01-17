@@ -3,16 +3,27 @@ import PropTypes from 'prop-types';
 import { View, Text, Button } from 'react-native';
 import styles from './styles';
 
-const ModalPopup = ({ productName }) => (
+const ModalPopup = ({ itemData }) => (
   <View
     style={styles.container}
   >
-    <Text style={styles.productName}>{ productName }</Text>
+    <Text style={styles.productName}>{ itemData.productName }</Text>
+    <Text>{ itemData.brand }</Text>
+    <Text>{ itemData.upc }</Text>
   </View>
 );
 
 ModalPopup.propTypes = {
-  productName: PropTypes.string.isRequired,
+  itemData: PropTypes.shape({
+    upc: PropTypes.string,
+    productName: PropTypes.string,
+    brand: PropTypes.string,
+    lowestPrice: PropTypes.number,
+    highestPrice: PropTypes.number,
+    imageUrls: PropTypes.array,
+    productDescription: PropTypes.string,
+    fit: PropTypes.number,
+  }).isRequired,
 };
 
 export default ModalPopup;

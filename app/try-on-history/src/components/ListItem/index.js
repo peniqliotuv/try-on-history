@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import styles from './styles';
 
 class ListItem extends Component {
-
   static propTypes = {
     history: PropTypes.shape({
       productName: PropTypes.string,
@@ -23,6 +22,7 @@ class ListItem extends Component {
       purchased: PropTypes.bool,
     }).isRequired,
     toggleModalVisibility: PropTypes.func.isRequired,
+    handleItemLookup: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -31,55 +31,34 @@ class ListItem extends Component {
 
   parseDate = (dateString) => (new Date(dateString).toLocaleDateString()) || '';
 
-  // animatedValue = new Animated.Value(0);
-  // isExpanded = false;
+  handlePress = (upc) => {
+    console.log(upc);
+    console.log('pressed')
+    this.props.toggleModalVisibility();
+    this.props.handleItemLookup(upc);
+  };
 
-  // animate = () => {
-  //   console.log('Animating');
-  //   this.isExpanded ? this.animatedValue.setValue(1) : this.animatedValue.setValue(0);
-  //   Animated.timing(
-  //     this.animatedValue,
-  //     {
-  //       toValue: this.isExpanded ? 0 : 1,
-  //       duration: 250,
-  //       easing: Easing.linear,
-  //     },
-  //   ).start(() => this.isExpanded = !this.isExpanded);
-  // };
 
   render() {
-    // const containerStyles = StyleSheet.flatten([
-    //   styles.container,
-    //   {
-    //     paddingBottom: this.animatedValue.interpolate({
-    //       inputRange: [0, 1],
-    //       outputRange: [10, 80],
-    //     }),
-    //     elevation: this.animatedValue.interpolate({
-    //       inputRange: [0, 1],
-    //       outputRange: [0, 3],
-    //     }),
-    //   },
-    // ]);
-
+    const { history } = this.props;
     return (
       <TouchableOpacity
-        onPress={this.props.toggleModalVisibility}
         hitSlop={{ top: 10, left: 20, bottom: 10, right: 20 }}
+        onPress={() => this.handlePress(history.upc)}
         style={styles.container}
-        activeOpacity={0.9}
+        activeOpacity={0.75}
       >
         <Text
           style={styles.productName}
           selectable={false}
           numberOfLines={1}
         >
-          { this.props.history.productName || '' }
+          { history.productName || '' }
         </Text>
         <Text
           style={styles.date}
         >
-          { this.parseDate(this.props.history.dateTriedOn) }
+          { this.parseDate(history.dateTriedOn) }
         </Text>
       </TouchableOpacity>
     );

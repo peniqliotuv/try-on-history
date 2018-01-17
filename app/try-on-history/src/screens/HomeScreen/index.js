@@ -8,8 +8,8 @@ import {
   Alert,
   Platform,
   BackHandler,
-  Modal,
 } from 'react-native';
+import Modal from 'react-native-modal';
 import { NavigationActions } from 'react-navigation';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -75,10 +75,17 @@ class HomeScreen extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!isEmpty(nextProps.itemData) && isEmpty(this.props.itemData)) {
-      Alert.alert(`Item found: ${nextProps.itemData.productName}!`);
-    } else if (nextProps.itemLookupError && !this.props.itemLookupError) {
-      Alert.alert(nextProps.itemLookupError);
+    if (this.state.currentIndex === 1) {
+      // If camera is visible
+      if (!isEmpty(nextProps.itemData) && isEmpty(this.props.itemData)) {
+        Alert.alert(`Item found: ${nextProps.itemData.productName}!`);
+        this.props.getHistory(this.props.token);
+      } else if (nextProps.itemLookupError && !this.props.itemLookupError) {
+        Alert.alert(nextProps.itemLookupError);
+      }
+    } else {
+      // If homepage is visible, do nothing
+
     }
   }
 
@@ -104,6 +111,10 @@ class HomeScreen extends Component {
   handleScroll = async (e, state, context) => {
     let { hasCameraPermissions } = this.state;
     if (state.index === 1) {
+      // dismiss modal if it's visible
+      if (this.state.isModalVisible) {
+        this.setState({ isModalVisible: false });
+      }
       const { status } = await Permissions.askAsync(Permissions.CAMERA);
       hasCameraPermissions = (status === 'granted');
     }
@@ -117,7 +128,6 @@ class HomeScreen extends Component {
     return (
       <Swiper
         loop={false}
-        horizontal={false}
         showsPagination={false}
         index={0}
         onMomentumScrollEnd={this.handleScroll}
@@ -131,6 +141,7 @@ class HomeScreen extends Component {
             user={this.props.user}
             handleLogout={this.handleLogout}
             historyData={this.props.historyData}
+            handleItemLookup={(barcode) => this.props.itemLookup(barcode, this.props.token)}
             toggleModalVisibility={this.toggleModalVisibility}
           />
           <Modal
@@ -138,9 +149,19 @@ class HomeScreen extends Component {
             animationType='slide'
             onRequestClose={this.toggleModalVisibility}
             onDismiss={this.toggleModalVisibility}
-            transparent
+            onBackButtonPress={this.toggleModalVisibility}
+            onBackdropPress={() => {
+              this.toggleModalVisibility();
+              console.log('backdrop pressed');
+            }}
+            backdropOpacity={0.5}
+            onSwipe={() => {
+              console.log('swiped!')
+              this.toggleModalVisibility();
+            }}
+            swipeDirection='down'
           >
-            <ModalPopup productName='asdf' />
+            <ModalPopup itemData={this.props.itemData} />
           </Modal>
         </View>
         <View style={styles.container}>
